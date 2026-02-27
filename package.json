@@ -1,0 +1,44 @@
+{
+  "name": "api-reservation-management",
+  "version": "1.0.0",
+  "description": "api for application reservation management",
+  "license": "ISC",
+  "author": "Yazid Khairul Rizal",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.[t|j]sx?$": "babel-jest"
+    },
+    "transformIgnorePatterns": [
+      "node_modules/(?!uuid|)/"
+    ]
+  },
+  "dependencies": {
+    "@prisma/client": "^4.15.0",
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "joi": "^18.0.2",
+    "jsonwebtoken": "^9.0.3",
+    "uuid": "^13.0.0",
+    "winston": "^3.19.0",
+    "express-fileupload": "^1.5.0"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.28.6",
+    "@types/bcrypt": "^6.0.0",
+    "@types/express": "^5.0.6",
+    "@types/jest": "^30.0.0",
+    "@types/supertest": "^6.0.3",
+    "@types/uuid": "^10.0.0",
+    "babel-jest": "^30.2.0",
+    "jest": "^30.2.0",
+    "prisma": "^4.15.0",
+    "supertest": "^7.2.2"
+  }
+}

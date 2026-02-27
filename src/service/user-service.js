@@ -51,6 +51,20 @@ const login = async (request) => {
 
 }
 
+const logout = async (username) => {
+    await prismaClient.user.update({
+        data: {
+            token: null
+        },
+        where: {
+            username: username
+        }
+    })
+    return "OK"
+}
+
+
 export default {
-    login
+    login,
+    logout
 }

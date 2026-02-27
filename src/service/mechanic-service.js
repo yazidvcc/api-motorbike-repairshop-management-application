@@ -22,6 +22,45 @@ const create = async (request) => {
 
 }
 
+const photo = async (mechanicId, request) => {
+    
+    const mechanic = validate(createMechanicPhotoValidation, {
+        id: mechanicId,
+        photo: request.name
+    })
+
+    const countInDatabase = await prismaClient.mechanic.count({
+        where: {
+            id: {
+                equals: mechanic.id
+            }
+        }
+    })
+
+    if (countInDatabase !== 1) {
+        throw new ResponseError(404, "Mechanic not found")
+    }
+
+    const fileNamed = `${mechanic.id}${uuid().toString().replace(/-/g, "")}.${request.name.split(".").pop()}`
+
+    await request.mv(__dirname + `/../../storage/mechanic/${fileNamed}`)
+
+    return prismaClient.mechanic.update({
+        where: {
+            id: mechanic.id
+        },
+        data: {
+            photo: fileNamed
+        },
+        select: {
+            id: true,
+            photo: true
+        }
+    })
+
+}
+
 export default {
-    create
+    create,
+    photo
 }

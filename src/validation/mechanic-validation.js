@@ -6,7 +6,10 @@ const createMechanicValidation = Joi.object({
     address: Joi.string().max(255).optional(),
 })
 
-
+const createMechanicPhotoValidation = Joi.object({
+    id: Joi.number().required(),
+    photo: Joi.string().regex(/\.(jpg|jpeg|png|gif|webp)$/).required()
+})
 
 export {
     createMechanicValidation

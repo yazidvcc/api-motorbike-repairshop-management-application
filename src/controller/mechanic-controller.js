@@ -12,6 +12,17 @@ const create = async (req, res, next) => {
     }
 }
 
+const photo = async (req, res, next) => {
+    try {
+        const result = await mechanicService.photo(req.params.mechanicId, req.files.photo)
+        res.status(200).json({
+            data: result
+        })
+    } catch (e) {
+        next(e)
+    }
+}
+
 export default {
     create
 }

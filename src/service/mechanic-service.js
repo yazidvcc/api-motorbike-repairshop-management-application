@@ -60,6 +60,59 @@ const photo = async (mechanicId, request) => {
 
 }
 
+const search = async (request) => {
+    
+    request = validate(searchMechanicValidation, request)
+
+    const skip = (request.page - 1) * request.size
+
+    let filters = [
+                {
+                    name: {
+                        contains: request.name
+                    }
+                },
+                {
+                    phone: {
+                        contains: request.phone
+                    }
+                },
+                {
+                    address: {
+                        contains: request.address
+                    }
+                }
+            ]
+
+    const mechanics = await prismaClient.mechanic.findMany({
+        where: {
+            AND: filters
+        }, 
+        skip: skip,
+        take: request.size,
+        orderBy: {
+            name: "asc"
+        }
+    })
+
+    const count = await prismaClient.mechanic.count({
+        where: {
+            AND: filters
+        },
+    })
+
+    return {
+        data: mechanics,
+        paging: {
+            page: request.page,
+            total_item: count,
+            total_page: Math.ceil(count / request.size)
+        }
+    }
+
+}
+
+
 export default {
     create,
     photo

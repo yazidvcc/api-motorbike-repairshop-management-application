@@ -23,6 +23,23 @@ const photo = async (req, res, next) => {
     }
 }
 
+const search = async (req, res, next) => {
+    try {
+        const request = {
+            name: req.query.name,
+            phone: req.query.phone,
+            address: req.query.address,
+            page: req.query.page,
+            size: req.query.size,
+        }
+
+        const result = await mechanicService.search(request)
+        res.status(200).json(result)
+    } catch (e) {
+        next(e)
+    }
+}
+
 export default {
     create
 }

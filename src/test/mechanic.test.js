@@ -53,5 +53,146 @@ describe("POST /api/mechanics", () => {
     })
 })
 
+describe("POST /api/mechanics/mechanicId/photo", () => {
+    
+    beforeEach(async () => {
+        await userRegister()
+    })
+    afterEach(async () => {
+        await prismaClient.mechanic.deleteMany()
+        await prismaClient.user.deleteMany()
+    })
 
+    it("should can be success add photo profile", async () => {
+        const loginResponse = await request(web).post("/api/users/login").send({
+            username: "test",
+            password: "test"
+        })
+
+        const mechanic = await mechanicRegister()
+
+        const response = await request(web).post(`/api/mechanics/${mechanic.id}/photo`)
+            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Content-Type", "multipart/form-data")
+            .attach("photo", __dirname + "/filetest/ayampenyet.jpeg")
+
+        depth(response.body)
+
+        expect(response.status).toBe(200)
+        expect(response.body.data).toBeDefined()
+        expect(response.body.data.photo).toBeDefined()
+    })
+
+    it("should reject if mechanic not found", async () => {
+        const loginResponse = await request(web).post("/api/users/login").send({
+            username: "test",
+            password: "test"
+        })
+
+        const response = await request(web).post(`/api/mechanics/12345/photo`)
+            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Content-Type", "multipart/form-data")
+            .attach("photo", __dirname + "/filetest/ayampenyet.jpeg")
+
+        expect(response.status).toBe(404)
+        expect(response.body.errors).toBeDefined()
+    })
+
+    it("should reject if file is not image", async () => {
+        const loginResponse = await request(web).post("/api/users/login").send({
+            username: "test",
+            password: "test"
+        })
+
+        const mechanic = await mechanicRegister()
+
+        const response = await request(web).post(`/api/mechanics/${mechanic.id}/photo`)
+            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Content-Type", "multipart/form-data")
+            .attach("photo", __dirname + "/filetest/text.txt")
+
+        expect(response.status).toBe(400)
+        expect(response.body.errors).toBeDefined()
+    })
+    
+    it("should reject if user is not authorization", async () => {
+        const mechanic = await mechanicRegister()
+
+        const response = await request(web).post(`/api/mechanics/${mechanic.id}/photo`)
+            .set("Content-Type", "multipart/form-data")
+            .attach("photo", __dirname + "/filetest/ayampenyet.jpeg")
+
+        expect(response.status).toBe(401)
+        expect(response.body.errors).toBeDefined()
+    })
+})
+
+describe("GET /api/mechanics", () => {
+
+    afterEach(async () => {
+        await prismaClient.mechanic.deleteMany()
+    })
+
+    it("should success search mechanics", async () => {
+        const loginResponse = await request(web).post("/api/users/login").send({
+            username: "test",
+            password: "test"
+        })
+
+        await createManyMechanic()
+
+        const response = await request(web).get("/api/mechanics")
+            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .query({
+                name: "test",
+            })
+
+        expect(response.status).toBe(200)
+        expect(response.body.data).toBeDefined()
+        expect(response.body.paging.total_item).toBe(12)
+    })
+
+    it("should success with paging", async () => {
+        const loginResponse = await request(web).post("/api/users/login").send({
+            username: "test",
+            password: "test"
+        })
+
+        await createManyMechanic()
+
+        const response = await request(web).get("/api/mechanics")
+            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .query({
+                name: "test",
+                page: 2,
+                size: 10
+            })
+
+        expect(response.status).toBe(200)
+        expect(response.body.data).toBeDefined()
+        expect(response.body.data.length).toBe(2)
+        expect(response.body.paging.total_item).toBe(12)
+        expect(response.body.paging.total_page).toBe(2)
+    })
+
+    it("should reject if value page invalid", async () => {
+        const loginResponse = await request(web).post("/api/users/login").send({
+            username: "test",
+            password: "test"
+        })
+
+        await createManyMechanic()
+
+        const response = await request(web).get("/api/mechanics")
+            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .query({
+                name: "test",
+                page: "test",
+                size: 10
+            })
+
+        expect(response.status).toBe(400)
+        expect(response.body.errors).toBeDefined()
+    })
+})
 

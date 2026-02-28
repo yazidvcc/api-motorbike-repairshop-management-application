@@ -112,8 +112,39 @@ const search = async (request) => {
 
 }
 
+const update = async (request) => {
+    
+    const mechanic = validate(updateMechaniceValidation, request)
+
+    const countInDatabase = await prismaClient.mechanic.count({
+        where: {
+            id: {
+                equals: mechanic.id
+            }
+        }
+    })
+
+    if (countInDatabase !== 1) {
+        throw new ResponseError(404, "Mechanic not found")
+    }
+
+    return prismaClient.mechanic.update({
+        where: {
+            id: mechanic.id
+        },
+        data: mechanic,
+        select: {
+            id: true,
+            name: true,
+            phone: true,
+            address: true
+        }
+    })
+}
 
 export default {
     create,
-    photo
+    photo,
+    search,
+    update
 }

@@ -40,6 +40,19 @@ const search = async (req, res, next) => {
     }
 }
 
+const update = async (req, res, next) => {
+    try {
+        const request = req.body
+        request.id = req.params.mechanicId
+        const result = await mechanicService.update(request)
+        res.status(200).json({
+            data: result
+        })
+    } catch (e) {
+        next(e)
+    }
+}
+
 export default {
     create
 }

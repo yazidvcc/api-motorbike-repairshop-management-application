@@ -196,3 +196,41 @@ describe("GET /api/mechanics", () => {
     })
 })
 
+describe("PUT /api/mechanics/mechanicId", () => {
+
+    beforeEach(async () => {
+        await createManyMechanic()
+    })
+    
+    afterEach(async () => {
+        await prismaClient.mechanic.deleteMany()
+    })
+
+    it("should success update mechanic", async () => {
+        const loginResponse = await request(web).post("/api/users/login").send({
+            username: "test",
+            password: "test"
+        })
+
+        const mechanic = await getMechanic()
+
+        const response = await request(web).put(`/api/mechanics/${mechanic.id}`)
+        .set("Authorization", "Bearer " + loginResponse.body.data.token)
+        .set("Content-Type", "application/json")
+        .send({ 
+            name: "test nol",
+            phone: "0895600436140",
+            address: "Jalan nol"
+        })
+
+        depth(response.body.errors)
+
+        expect(response.status).toBe(200)
+        expect(response.body.data).toBeDefined()
+        expect(response.body.data.name).toBe("test nol")
+        expect(response.body.data.phone).toBe("0895600436140")
+        expect(response.body.data.address).toBe("Jalan nol")
+    })
+})
+
+

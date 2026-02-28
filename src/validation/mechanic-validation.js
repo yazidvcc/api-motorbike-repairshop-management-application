@@ -19,7 +19,16 @@ const searchMechanicValidation = Joi.object({
     size: Joi.number().min(1).max(100).default(10).optional()
 })
 
+const updateMechaniceValidation = Joi.object({
+    id: Joi.number().required(),
+    name: Joi.string().max(100).regex(/^[a-zA-Z ]+$/).required(),
+    phone: Joi.string().max(20).regex(/^[0-9]+$/).required(),
+    address: Joi.string().max(255).required(),
+})
+
 export {
     createMechanicValidation,
-    createMechanicPhotoValidation
+    createMechanicPhotoValidation,
+    searchMechanicValidation,
+    updateMechaniceValidation
 }

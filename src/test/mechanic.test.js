@@ -237,7 +237,7 @@ describe("PUT /api/mechanics/mechanicId", () => {
             username: "test",
             password: "test"
         })
-
+   
         depth(loginResponse.body)
 
         const response = await request(web).put(`/api/mechanics/12345`)

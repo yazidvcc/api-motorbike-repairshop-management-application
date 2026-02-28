@@ -21,13 +21,13 @@ const login = async (request) => {
     })
 
     if (!user) {
-        throw new ResponseError(401, "Username or password is wrong")
+        throw new ResponseError(404, "Username or password is wrong")
     }
 
     const isPasswordMatch = await bcrypt.compare(loginRequest.password, user.password)
 
     if (!isPasswordMatch) {
-        throw new ResponseError(401, "username or password is wrong")
+        throw new ResponseError(404, "username or password is wrong")
     }
 
     const credential = uuid().toString();

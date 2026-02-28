@@ -54,5 +54,8 @@ const update = async (req, res, next) => {
 }
 
 export default {
-    create
+    create,
+    photo,
+    search,
+    update
 }

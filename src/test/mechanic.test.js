@@ -231,6 +231,29 @@ describe("PUT /api/mechanics/mechanicId", () => {
         expect(response.body.data.phone).toBe("0895600436140")
         expect(response.body.data.address).toBe("Jalan nol")
     })
+
+    it("should reject if mechanic not founds", async () => {
+        const loginResponse = await request(web).post("/api/users/login").send({
+            username: "test",
+            password: "test"
+        })
+
+        depth(loginResponse.body)
+
+        const response = await request(web).put(`/api/mechanics/12345`)
+        .set("Authorization", "Bearer " + loginResponse.body.data.token)
+        .set("Content-Type", "application/json")
+        .send({ 
+            name: "test nol",
+            phone: "0895600436140",
+            address: "Jalan nol"
+        })
+
+        depth(response.body.errors)
+
+        expect(response.status).toBe(404)
+        expect(response.body.errors).toBeDefined()
+    })
 })
 
 

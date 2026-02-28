@@ -3,7 +3,7 @@ import ResponseError from "../error/response-error"
 import validate from "../validation/validation"
 import { v4 as uuid } from "uuid"
 import { depth } from "../application/depht"
-import { createMechanicValidation, createMechanicPhotoValidation, searchMechanicValidation, updateMechaniceValidation } from "../validation/mechanic-validation"
+import { createMechanicValidation, createMechanicPhotoValidation, searchMechanicValidation, updateMechaniceValidation, deleteMechanicValidation } from "../validation/mechanic-validation"
 
 
 const create = async (request) => {
@@ -142,9 +142,33 @@ const update = async (request) => {
     })
 }
 
+const remove = async (mechanicId) => {
+    
+    mechanicId = validate(deleteMechanicValidation, mechanicId)
+
+    const countInDatabase = await prismaClient.mechanic.count({
+        where: {
+            id: {
+                equals: mechanicId
+            }
+        }
+    })
+
+    if (countInDatabase !== 1) {
+        throw new ResponseError(404, "Mechanic not found")
+    }
+
+    return prismaClient.mechanic.delete({
+        where: {
+            id: mechanicId
+        }
+    })
+}
+
 export default {
     create,
     photo,
     search,
-    update
+    update,
+    remove
 }

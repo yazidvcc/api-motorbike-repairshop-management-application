@@ -26,9 +26,12 @@ const updateMechaniceValidation = Joi.object({
     address: Joi.string().max(255).required(),
 })
 
+const deleteMechanicValidation = Joi.number().required()
+
 export {
     createMechanicValidation,
     createMechanicPhotoValidation,
     searchMechanicValidation,
-    updateMechaniceValidation
+    updateMechaniceValidation,
+    deleteMechanicValidation
 }

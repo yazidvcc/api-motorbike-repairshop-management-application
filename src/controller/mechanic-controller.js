@@ -53,9 +53,21 @@ const update = async (req, res, next) => {
     }
 }
 
+const remove = async (req, res, next) => {
+    try {
+        const result = await mechanicService.remove(req.params.mechanicId)
+        res.status(200).json({
+            data: "Success remove mechanic"
+        })
+    } catch (e) {
+        next(e)
+    }
+}
+
 export default {
     create,
     photo,
     search,
-    update
+    update,
+    remove
 }

@@ -13,7 +13,6 @@ describe("POST /api/mechanics", () => {
     })
     afterEach(async () => {
         await prismaClient.mechanic.deleteMany()
-        await prismaClient.user.deleteMany()
     })
 
     it("should success create mechanic", async () => {
@@ -55,12 +54,8 @@ describe("POST /api/mechanics", () => {
 
 describe("POST /api/mechanics/mechanicId/photo", () => {
     
-    beforeEach(async () => {
-        await userRegister()
-    })
     afterEach(async () => {
         await prismaClient.mechanic.deleteMany()
-        await prismaClient.user.deleteMany()
     })
 
     it("should can be success add photo profile", async () => {
@@ -252,6 +247,57 @@ describe("PUT /api/mechanics/mechanicId", () => {
         depth(response.body.errors)
 
         expect(response.status).toBe(404)
+        expect(response.body.errors).toBeDefined()
+    })
+})
+
+describe("DELETE /api/mechanics/mechanicId", () => {
+    beforeEach(async () => {
+        await createManyMechanic()
+    })
+
+    afterEach(async () => {
+        await prismaClient.mechanic.deleteMany()
+    })
+
+    it("should success delete mechanic", async () => {
+        const loginResponse = await request(web).post("/api/users/login").send({
+            username: "test",
+            password: "test"
+        })
+
+        const mechanic = await getMechanic()
+
+        const response = await request(web).delete(`/api/mechanics/${mechanic.id}`)
+        .set("Authorization", "Bearer " + loginResponse.body.data.token)
+
+        depth(response.body)
+
+        expect(response.status).toBe(200)
+        expect(response.body.data).toBe("Success remove mechanic")
+    })
+
+    it("should reject if mechanic not found for delete", async () => {
+        const loginResponse = await request(web).post("/api/users/login").send({
+            username: "test",
+            password: "test"
+        })
+
+        const response = await request(web).delete(`/api/mechanics/12345`)
+        .set("Authorization", "Bearer " + loginResponse.body.data.token)
+
+        depth(response.body)
+
+        expect(response.status).toBe(404)
+        expect(response.body.errors).toBeDefined()
+    })
+
+    it("should reject if user is not authorization", async () => {
+        const mechanic = await getMechanic()
+
+        const response = await request(web).delete(`/api/mechanics/${mechanic.id}`)
+
+        expect(response.status).toBe(401)
         expect(response.body.errors).toBeDefined()
     })
 })

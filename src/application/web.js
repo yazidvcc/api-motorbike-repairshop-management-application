@@ -5,6 +5,7 @@ import userRouter from '../route/api.js';
 import expressFileUpload from 'express-fileupload'
 
 const web = express();
+web.use(express.static("storage"))
 web.use(express.json());
 web.use(expressFileUpload())
 web.use(publicRouter);

@@ -7,6 +7,11 @@ const userRouter = new express.Router()
 
 userRouter.use(authMiddleware)
 userRouter.post("/api/users/logout", userController.logout)
+userRouter.get("/api/mechanics", mechanicController.search)
+userRouter.put("/api/mechanics/:mechanicId", mechanicController.update)
+userRouter.delete("/api/mechanics/:mechanicId", mechanicController.remove)
+userRouter.post("/api/mechanics/:mechanicId/photo", mechanicController.photo)
+
 
 
 export default userRouter;

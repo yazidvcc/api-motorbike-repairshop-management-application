@@ -6,7 +6,14 @@ const createItemValidation = Joi.object({
     stock: Joi.number().required()
 })
 
+const updateItemValidation = Joi.object({
+    id: Joi.number().required(),
+    name: Joi.string().max(100).optional(),
+    price: Joi.number().optional(),
+    stock: Joi.number().optional()
+})
 
 export {
-    createItemValidation
+    createItemValidation,
+    updateItemValidation
 }

@@ -11,7 +11,22 @@ const create = async (req, res, next) => {
     }
 }
 
+const update = async (req, res, next) => {
+    try {
+        const request = req.body
+        request.id = req.params.itemId
+
+        const result = await itemService.update(request)
+        res.status(200).json({
+            data: result
+        })
+    } catch (e) {
+        next(e)
+    }
+}
+
 
 export default {
-    create
+    create,
+    update
 }

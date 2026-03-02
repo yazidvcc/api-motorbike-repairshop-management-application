@@ -57,6 +57,12 @@ const createItem = async () => {
             name: "test",
             price: 10000,
             stock: 10
+        },
+        select: {
+            id: true,
+            name: true,
+            price: true,
+            stock: true
         }
     })
 }

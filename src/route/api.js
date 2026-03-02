@@ -11,6 +11,8 @@ userRouter.get("/api/mechanics", mechanicController.search)
 userRouter.put("/api/mechanics/:mechanicId", mechanicController.update)
 userRouter.delete("/api/mechanics/:mechanicId", mechanicController.remove)
 userRouter.post("/api/mechanics/:mechanicId/photo", mechanicController.photo)
+userRouter.get("/api/mechanics/:mechanicId/photo", mechanicController.getPhoto)
+
 
 
 

@@ -302,4 +302,68 @@ describe("DELETE /api/mechanics/mechanicId", () => {
     })
 })
 
+describe("GET /api/mechanics/:mechanicId/photo", () => {
+    beforeEach(async () => {
+        await createManyMechanic()
+    })
 
+    afterEach(async () => {
+        await prismaClient.mechanic.deleteMany()
+    })
+
+    it("should success get photo mechanic", async () => {
+        const loginResponse = await request(web).post("/api/users/login").send({
+            username: "test",
+            password: "test"
+        })
+
+        const mechanic = await getMechanic()
+
+        const createPhotoMechanic = await request(web).post(`/api/mechanics/${mechanic.id}/photo`)
+        .set("Authorization", "Bearer " + loginResponse.body.data.token)
+        .set("Content-Type", "multipart/form-data")
+        .attach("photo", __dirname + "/filetest/ayampenyet.jpeg")
+
+        const getPhotoMechanic = await request(web).get(`/api/mechanics/${mechanic.id}/photo`)
+        .set("Authorization", "Bearer " + loginResponse.body.data.token)
+
+        depth(getPhotoMechanic.body)
+
+        expect(getPhotoMechanic.status).toBe(200)
+        expect(getPhotoMechanic.get("Content-Type")).toBe("image/jpeg")
+    })
+
+    it("should reject if mechanic not found", async () => {
+        const loginResponse = await request(web).post("/api/users/login").send({
+            username: "test",
+            password: "test"
+        })
+
+        const response = await request(web).get(`/api/mechanics/12345/photo`)
+        .set("Authorization", "Bearer " + loginResponse.body.data.token)
+
+        depth(response.body)
+
+        expect(response.status).toBe(404)
+        expect(response.body.errors).toBeDefined()
+    })
+
+    it("should be return image not-found jpg", async () => {
+        const loginResponse = await request(web).post("/api/users/login").send({
+            username: "test",
+            password: "test"
+        })
+
+        const mechanic = await getMechanic()
+
+        const getPhotoMechanic = await request(web).get(`/api/mechanics/${mechanic.id}/photo`)
+        .set("Authorization", "Bearer " + loginResponse.body.data.token)
+
+        depth(getPhotoMechanic.body)
+
+        expect(getPhotoMechanic.status).toBe(200)
+        expect(getPhotoMechanic.get("Content-Type")).toBe("image/png")
+    })
+
+    
+})

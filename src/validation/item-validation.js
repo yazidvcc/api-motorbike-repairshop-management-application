@@ -6,6 +6,7 @@ const createItemValidation = Joi.object({
     stock: Joi.number().required()
 })
 
+
 export {
     createItemValidation
 }

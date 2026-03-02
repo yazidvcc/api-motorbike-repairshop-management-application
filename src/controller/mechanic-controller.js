@@ -64,10 +64,20 @@ const remove = async (req, res, next) => {
     }
 }
 
+const getPhoto = async (req, res, next) => {
+    try {
+        const path = await mechanicService.getPhoto(req.params.mechanicId)
+        res.status(200).sendFile(path)
+    } catch (e) {
+        next(e)
+    }
+}
+
 export default {
     create,
     photo,
     search,
     update,
-    remove
+    remove,
+    getPhoto
 }

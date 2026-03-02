@@ -8,9 +8,7 @@ import { depth } from "../application/depht"
 
 
 describe("POST /api/mechanics", () => {
-    beforeEach(async () => {
-        await userRegister()
-    })
+
     afterEach(async () => {
         await prismaClient.mechanic.deleteMany()
     })
@@ -32,7 +30,7 @@ describe("POST /api/mechanics", () => {
         expect(response.body.data).toBeDefined()
     })
 
-    it("should reject with invalid phone", async (params) => {
+    it("should reject if request is invalid", async () => {
         const loginResponse = await request(web).post("/api/users/login").send({
             username: "test",
             password: "test"
@@ -42,14 +40,13 @@ describe("POST /api/mechanics", () => {
             .set("Authorization", "Bearer " + loginResponse.body.data.token)
             .set("Content-Type", "application/json")
             .send({
-                name: "test",
-                phone: "jefwfwng",
-                address: "fefjiejfe"
+                name: ""
             })
 
         expect(response.status).toBe(400)
-        expect(response.body.error).toBeDefined()
+        expect(response.body.errors).toBeDefined()
     })
+
 })
 
 describe("POST /api/mechanics/mechanicId/photo", () => {

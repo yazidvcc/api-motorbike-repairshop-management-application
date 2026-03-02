@@ -25,8 +25,22 @@ const update = async (req, res, next) => {
     }
 }
 
+const get = async (req, res, next) => {
+    try {
+        const itemId = req.params.itemId
+
+        const result = await itemService.get(itemId)
+        res.status(200).json({
+            data: result
+        })
+    } catch (e) {
+        next(e)
+    }
+}
+
 
 export default {
     create,
-    update
+    update,
+    get
 }

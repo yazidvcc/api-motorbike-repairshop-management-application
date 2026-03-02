@@ -1,7 +1,7 @@
 import prismaClient from "../application/database"
 import validate from "../validation/validation"
-import { createItemValidation, updateItemValidation } from "../validation/item-validation"
 import ResponseError from "../error/response-error"
+import { createItemValidation, updateItemValidation, idItemValidation } from "../validation/item-validation"
 
 const create = async (request) => {
     
@@ -63,7 +63,31 @@ const update = async (request) => {
 
 }
 
+const get = async (itemId) => {
+
+    itemId = validate(idItemValidation, itemId)
+
+    const item = await prismaClient.item.findUnique({
+        where: {
+            id: itemId
+        },
+        select: {
+            id: true,
+            name: true,
+            price: true,
+            stock: true
+        }
+    })
+
+    if(!item) {
+        throw new ResponseError(404, "Item not found")
+    }
+
+    return item
+    
+}
 export default {
     create,
-    update
+    update,
+    get
 }

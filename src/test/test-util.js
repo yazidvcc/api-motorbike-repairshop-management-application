@@ -50,9 +50,27 @@ const getMechanic = async () => {
     })
     
 }
+
+const createItem = async () => {
+    return prismaClient.item.create({
+        data: {
+            name: "test",
+            price: 10000,
+            stock: 10
+        },
+        select: {
+            id: true,
+            name: true,
+            price: true,
+            stock: true
+        }
+    })
+}
+
 export {
     userRegister,
     mechanicRegister,
     createManyMechanic,
-    getMechanic
+    getMechanic,
+    createItem
 }

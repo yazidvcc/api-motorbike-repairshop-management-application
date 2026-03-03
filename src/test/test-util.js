@@ -67,10 +67,26 @@ const createItem = async () => {
     })
 }
 
+const createManyItem = async () => {
+    let items = []
+    for (let i = 1; i < 21; i++) {
+        items.push({
+            name: `test-${i}`,
+            price: 10000,
+            stock: 10
+        })
+    }
+
+    return prismaClient.item.createMany({
+        data: items
+    })
+}
+
 export {
     userRegister,
     mechanicRegister,
     createManyMechanic,
     getMechanic,
-    createItem
+    createItem,
+    createManyItem
 }

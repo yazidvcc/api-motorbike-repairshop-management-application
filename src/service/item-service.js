@@ -2,6 +2,7 @@ import prismaClient from "../application/database"
 import validate from "../validation/validation"
 import ResponseError from "../error/response-error"
 import { createItemValidation, updateItemValidation, idItemValidation } from "../validation/item-validation"
+import { searchMechanicValidation } from "../validation/mechanic-validation"
 
 const create = async (request) => {
     
@@ -108,10 +109,52 @@ const remove = async (itemId) => {
     })
 }
 
+const search = async (request) => {
+    
+    request = validate(searchMechanicValidation, request)
+
+    const skip = (request.page - 1) * request.size
+
+    const filters = [
+        {
+            name: {
+                contains: request.name
+            }
+        }
+    ]
+
+    const items = await prismaClient.item.findMany({
+        where: {
+            AND: filters
+        },
+        skip: skip,
+        take: request.size,
+        orderBy: {
+            name: "asc"
+        }
+    })   
+    
+    const count = await prismaClient.item.count({
+        where: {
+            AND: filters
+        }
+    })
+    
+    return {
+        data: items,
+        paging: {
+            page: request.page,
+            total_item: count,
+            total_page: Math.ceil(count / request.size)
+        }
+    }
+    
+}
 
 export default {
     create,
     update,
     get,
-    remove
+    remove,
+    search
 }

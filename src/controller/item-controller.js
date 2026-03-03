@@ -51,10 +51,26 @@ const remove = async (req, res, next) => {
     }
 }
 
+const search = async (req, res, next) => {
+    try {
+        const request = {
+            name: req.query.name,
+            page: req.query.page,
+            size: req.query.size
+        }
+
+        const result = await itemService.search(request)
+        res.status(200).json(result)
+    } catch (e) {
+        next(e)
+    }
+}
+
 
 export default {
     create,
     update,
     get,
-    remove
+    remove,
+    search
 }

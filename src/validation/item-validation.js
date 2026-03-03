@@ -13,6 +13,12 @@ const updateItemValidation = Joi.object({
     stock: Joi.number().optional()
 })
 
+const searchItemValidation = Joi.object({
+    name: Joi.string().max(100).optional(),
+    page: Joi.number().min(1).default(1).optional(),
+    size: Joi.number().min(1).max(100).default(10).optional()
+}) 
+
 const idItemValidation = Joi.number().required()
 
 export {

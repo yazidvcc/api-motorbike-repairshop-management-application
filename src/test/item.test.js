@@ -16,7 +16,7 @@ describe("POST /api/items", () => {
             username: "test",
             password: "test"
         })
-        
+
         const response = await request(web).post("/api/items")
             .set("Authorization", "Bearer " + loginResponse.body.data.token)
             .set("Content-Type", "application/json")
@@ -176,7 +176,7 @@ describe("PUT /api/items/itemId", () => {
 })
 
 describe("GET /api/items/itemId", () => {
-    
+
     afterEach(async () => {
         await prismaClient.item.deleteMany()
     })
@@ -216,3 +216,43 @@ describe("GET /api/items/itemId", () => {
         expect(response.body.errors).toBeDefined()
     })
 })
+
+describe("DELETE /api/items/itemId", () => {
+    
+    afterEach(async () => {
+        await prismaClient.item.deleteMany()
+    })
+
+    it("should success delete item", async () => {
+        const loginResponse = await request(web).post("/api/users/login").send({
+            username: "test",
+            password: "test"
+        })
+
+        const item = await createItem()
+
+        const response = await request(web).delete(`/api/items/${item.id}`)
+            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+
+        depth(response.body)
+
+        expect(response.status).toBe(200)
+        expect(response.body.data).toBeDefined()
+    })
+
+    it("should reject if item is not found", async () => {
+        const loginResponse = await request(web).post("/api/users/login").send({
+            username: "test",
+            password: "test"
+        })
+
+        const response = await request(web).delete(`/api/items/123`)
+            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+
+        depth(response.body)
+
+        expect(response.status).toBe(404)
+        expect(response.body.errors).toBeDefined()
+    })
+})
+

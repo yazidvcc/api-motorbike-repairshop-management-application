@@ -38,9 +38,23 @@ const get = async (req, res, next) => {
     }
 }
 
+const remove = async (req, res, next) => {
+    try {
+        const itemId = req.params.itemId
+
+        const result = await itemService.remove(itemId)
+        res.status(200).json({
+            data: "OK"
+        })
+    } catch (e) {
+        next(e)
+    }
+}
+
 
 export default {
     create,
     update,
-    get
+    get,
+    remove
 }

@@ -20,6 +20,6 @@ userRouter.get("/api/mechanics/:mechanicId/photo", mechanicController.getPhoto)
 userRouter.post("/api/items", itemController.create)
 userRouter.get("/api/items/:itemId", itemController.get)
 userRouter.put("/api/items/:itemId", itemController.update)
-
+userRouter.delete("/api/items/:itemId", itemController.remove)
 
 export default userRouter;

@@ -86,8 +86,32 @@ const get = async (itemId) => {
     return item
     
 }
+
+const remove = async (itemId) => {
+    
+    itemId = validate(idItemValidation, itemId)
+
+    const item = await prismaClient.item.findUnique({
+        where: {
+            id: itemId
+        }
+    })
+
+    if(!item) {
+        throw new ResponseError(404, "Item not found")
+    }
+
+    return prismaClient.item.delete({
+        where: {
+            id: itemId
+        }
+    })
+}
+
+
 export default {
     create,
     update,
-    get
+    get,
+    remove
 }

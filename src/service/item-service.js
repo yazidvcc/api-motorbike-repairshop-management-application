@@ -191,11 +191,33 @@ const photo = async (itemId, request) => {
 
 }
 
+const getPhoto = async (itemId) => {
+
+    itemId = validate(idItemValidation, itemId)
+
+    const item = await prismaClient.item.findUnique({
+        where: {
+            id: itemId
+        }
+    })
+
+    if(!item) {
+        throw new ResponseError(404, "Item not found")
+    }
+
+    if (!item.photo) {
+        return path.resolve(__dirname, "../../storage/item/not-found.png")
+    }
+
+    return path.resolve(__dirname, "../../storage/item", item.photo)
+}
+
 export default {
     create,
     update,
     get,
     remove,
     search,
-    photo
+    photo,
+    getPhoto
 }

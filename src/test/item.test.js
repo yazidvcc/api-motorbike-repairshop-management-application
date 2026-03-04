@@ -397,3 +397,67 @@ describe("POST /api/items/itemId/photo", () => {
 
     
 })
+
+describe("GET /api/items/itemId/photo", () => {
+
+    afterEach(async () => {
+        await prismaClient.item.deleteMany()
+    })
+
+    it("should success get photo item", async () => {
+        const loginResponse = await request(web).post("/api/users/login").send({
+            username: "test",
+            password: "test"
+        })
+
+        const item = await createItem()
+
+        const addPhotoResponse = await request(web).post(`/api/items/${item.id}/photo`)
+            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Content-Type", "multipart/form-data")
+            .attach("photo", __dirname + "/filetest/ayampenyet.jpeg")
+
+        const response = await request(web).get(`/api/items/${item.id}/photo`)
+            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+
+        depth(response.body)
+
+        expect(response.status).toBe(200)
+        expect(response.get("Content-Type")).toBe("image/jpeg")
+        
+    })
+
+    it("should reject if item not found", async () => {
+        const loginResponse = await request(web).post("/api/users/login").send({
+            username: "test",
+            password: "test"
+        })
+
+        const response = await request(web).get(`/api/items/123/photo`)
+            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+
+        depth(response.body)
+
+        expect(response.status).toBe(404)
+        expect(response.body.errors).toBeDefined()
+    })
+
+    it("should reject if photo not found", async () => {
+        const loginResponse = await request(web).post("/api/users/login").send({
+            username: "test",
+            password: "test"
+        })
+
+        const item = await createItem()
+
+        const response = await request(web).get(`/api/items/${item.id}/photo`)
+            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+
+        depth(response.body)
+
+        expect(response.status).toBe(200)
+        expect(response.get("Content-Type")).toBe("image/png")
+        
+    })
+
+})

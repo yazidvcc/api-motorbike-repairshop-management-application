@@ -77,6 +77,15 @@ const photo = async (req, res, next) => {
     }
 }
 
+const getPhoto = async (req, res, next) => {
+    try {
+        const result = await itemService.getPhoto(req.params.itemId)
+        res.status(200).sendFile(result)
+    } catch (e) {
+        next(e)
+    }
+}
+
 
 export default {
     create,
@@ -84,5 +93,6 @@ export default {
     get,
     remove,
     search,
-    photo
+    photo,
+    getPhoto
 }

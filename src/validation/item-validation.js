@@ -19,6 +19,11 @@ const searchItemValidation = Joi.object({
     size: Joi.number().min(1).max(100).default(10).optional()
 }) 
 
+const createItemPhotoValidation = Joi.object({
+    id: Joi.number().required(),
+    photo: Joi.string().regex(/\.(jpg|jpeg|png|gif|webp)$/).required()
+})
+
 const idItemValidation = Joi.number().required()
 
 export {

@@ -333,4 +333,67 @@ describe("GET /api/items", () => {
     })
 })
 
+describe("POST /api/items/itemId/photo", () => {
 
+    afterEach(async () => {
+        await prismaClient.item.deleteMany()
+    })
+
+    it("should success upload photo", async () => {
+        const loginResponse = await request(web).post("/api/users/login").send({
+            username: "test",
+            password: "test"
+        })
+
+        const item = await createItem()
+
+        const response = await request(web).post(`/api/items/${item.id}/photo`)
+            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Content-Type", "multipart/form-data")
+            .attach("photo", __dirname + "/filetest/ayampenyet.jpeg")
+
+        depth(response.body)
+
+        expect(response.status).toBe(201)
+        expect(response.body.data).toBeDefined()
+        expect(response.body.data.photo).toBeDefined()
+    })
+
+    it("should reject if item not found", async () => {
+        const loginResponse = await request(web).post("/api/users/login").send({
+            username: "test",
+            password: "test"
+        })
+
+        const response = await request(web).post(`/api/items/123/photo`)
+            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Content-Type", "multipart/form-data")
+            .attach("photo", __dirname + "/filetest/ayampenyet.jpeg")
+
+        depth(response.body)
+
+        expect(response.status).toBe(404)
+        expect(response.body.errors).toBeDefined()
+    })
+
+    it("should reject if photo is invalid", async () => {
+        const loginResponse = await request(web).post("/api/users/login").send({
+            username: "test",
+            password: "test"
+        })
+
+        const item = await createItem()
+
+        const response = await request(web).post(`/api/items/${item.id}/photo`)
+            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Content-Type", "multipart/form-data")
+            .attach("photo", __dirname + "/filetest/text.txt")
+
+        depth(response.body)
+
+        expect(response.status).toBe(400)
+        expect(response.body.errors).toBeDefined()
+    })
+
+    
+})

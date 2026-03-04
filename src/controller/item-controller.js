@@ -66,6 +66,17 @@ const search = async (req, res, next) => {
     }
 }
 
+const photo = async (req, res, next) => {
+    try {
+        const result = await itemService.photo(req.params.itemId, req.files.photo)
+        res.status(201).json({
+            data: result
+        })
+    } catch (e) {
+        next(e)
+    }
+}
+
 
 export default {
     create,

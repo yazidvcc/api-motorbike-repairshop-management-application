@@ -151,6 +151,44 @@ const search = async (request) => {
     
 }
 
+const photo = async (itemId, request) => {
+
+    const item = validate(createItemPhotoValidation, {
+        id: itemId,
+        photo: request.name
+    })
+
+    const countInDatabase = await prismaClient.item.count({
+        where: {
+            id: item.id
+        }
+    })
+
+    if (countInDatabase === 0) {
+        throw new ResponseError(404, "Item not found")
+    }
+
+    const fileName = `${item.id}${uuid().toString().replace(/-/g, "")}.${request.name.split(".").pop()}`
+
+    const storagePath = path.resolve(__dirname, "/../../storage/item", fileName)
+
+    await request.mv(storagePath)
+
+    return prismaClient.item.update({
+        where: {
+            id: item.id
+        },
+        data: {
+            photo: fileName
+        },
+        select: {
+            id: true,
+            photo: true
+        }
+    })
+
+}
+
 export default {
     create,
     update,

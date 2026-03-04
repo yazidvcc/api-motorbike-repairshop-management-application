@@ -22,5 +22,6 @@ userRouter.get("/api/items", itemController.search)
 userRouter.get("/api/items/:itemId", itemController.get)
 userRouter.put("/api/items/:itemId", itemController.update)
 userRouter.delete("/api/items/:itemId", itemController.remove)
+userRouter.post("/api/items/:itemId/photo", itemController.photo)
 
 export default userRouter;

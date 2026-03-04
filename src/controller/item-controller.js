@@ -83,5 +83,6 @@ export default {
     update,
     get,
     remove,
-    search
+    search,
+    photo
 }

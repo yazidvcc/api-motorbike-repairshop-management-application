@@ -1,8 +1,10 @@
 import prismaClient from "../application/database"
 import validate from "../validation/validation"
 import ResponseError from "../error/response-error"
-import { createItemValidation, updateItemValidation, idItemValidation } from "../validation/item-validation"
-import { searchMechanicValidation } from "../validation/mechanic-validation"
+import path from "path"
+import { v4 as uuid } from "uuid"
+import { createItemValidation, updateItemValidation, idItemValidation,  searchMechanicValidation, createItemPhotoValidation } from "../validation/item-validation"
+
 
 const create = async (request) => {
     
@@ -170,7 +172,7 @@ const photo = async (itemId, request) => {
 
     const fileName = `${item.id}${uuid().toString().replace(/-/g, "")}.${request.name.split(".").pop()}`
 
-    const storagePath = path.resolve(__dirname, "/../../storage/item", fileName)
+    const storagePath = path.resolve(__dirname, "../../storage/item", fileName)
 
     await request.mv(storagePath)
 
@@ -194,5 +196,6 @@ export default {
     update,
     get,
     remove,
-    search
+    search,
+    photo
 }

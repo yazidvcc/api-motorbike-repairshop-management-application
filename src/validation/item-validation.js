@@ -29,5 +29,6 @@ const idItemValidation = Joi.number().required()
 export {
     createItemValidation,
     updateItemValidation,
-    idItemValidation
+    idItemValidation,
+    createItemPhotoValidation
 }

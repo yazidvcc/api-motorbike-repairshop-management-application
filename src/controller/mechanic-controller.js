@@ -1,5 +1,5 @@
-import mechanicService from "../service/mechanic-service"
-import userService from "../service/user-service"
+import mechanicService from "../service/mechanic-service.js"
+import userService from "../service/user-service.js"
 
 const create = async (req, res, next) => {
     try {

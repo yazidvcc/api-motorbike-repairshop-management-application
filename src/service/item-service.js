@@ -1,9 +1,9 @@
-import prismaClient from "../application/database"
-import validate from "../validation/validation"
-import ResponseError from "../error/response-error"
+import prismaClient from "../application/database.js"
+import validate from "../validation/validation.js"
+import ResponseError from "../error/response-error.js"
 import path from "path"
 import { v4 as uuid } from "uuid"
-import { createItemValidation, updateItemValidation, idItemValidation,  searchMechanicValidation, createItemPhotoValidation } from "../validation/item-validation"
+import { createItemValidation, updateItemValidation, idItemValidation,  searchItemValidation, createItemPhotoValidation } from "../validation/item-validation.js"
 
 
 const create = async (request) => {
@@ -113,7 +113,7 @@ const remove = async (itemId) => {
 
 const search = async (request) => {
     
-    request = validate(searchMechanicValidation, request)
+    request = validate(searchItemValidation, request)
 
     const skip = (request.page - 1) * request.size
 

@@ -30,5 +30,6 @@ export {
     createItemValidation,
     updateItemValidation,
     idItemValidation,
-    createItemPhotoValidation
+    createItemPhotoValidation,
+    searchItemValidation
 }

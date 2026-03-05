@@ -1,9 +1,9 @@
 import request from "supertest"
-import prismaClient from "../application/database"
-import { web } from "../application/web"
-import { logger } from "../application/logging"
-import { mechanicRegister, userRegister, createManyMechanic, getMechanic } from "./test-util"
-import { depth } from "../application/depht"
+import prismaClient from "../application/database.js"
+import { web } from "../application/web.js"
+import { logger } from "../application/logging.js"
+import { mechanicRegister, userRegister, createManyMechanic, getMechanic } from "./test-util.js"
+import { depth } from "../application/depht.js"
 
 
 

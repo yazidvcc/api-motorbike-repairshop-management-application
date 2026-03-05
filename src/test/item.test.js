@@ -1,8 +1,8 @@
 import request from "supertest"
-import { web } from "../application/web"
-import { depth } from "../application/depht"
-import prismaClient from "../application/database"
-import { createItem, createManyItem } from "./test-util"
+import { web } from "../application/web.js"
+import { depth } from "../application/depht.js"
+import prismaClient from "../application/database.js"
+import { createItem, createManyItem } from "./test-util.js"
 
 describe("POST /api/items", () => {
 
@@ -256,7 +256,7 @@ describe("DELETE /api/items/itemId", () => {
     })
 })
 
-describe("GET /api/items", () => {
+describe("GET /api/itemss", () => {
     beforeEach(async () => {
         await createManyItem()
     })

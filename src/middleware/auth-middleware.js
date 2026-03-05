@@ -7,7 +7,7 @@ const authMiddleware = async (req, res, next) => {
     const token = req.get("Authorization")
 
     if (!token) {
-        res.status(401).json({
+        return res.status(401).json({
             errors: "Unauthorized"
         }).end()
     }
@@ -17,7 +17,7 @@ const authMiddleware = async (req, res, next) => {
     jwt.verify(tokenValue, process.env.APP_SECRET, async (err, decoded) => {
 
         if (err) {
-            res.status(401).json({
+            return res.status(401).json({
                 errors: "Unauthorized"
             }).end()
         }
@@ -33,7 +33,7 @@ const authMiddleware = async (req, res, next) => {
         })
 
         if (!user) {
-            res.status(401).json({
+            return res.status(401).json({
                 errors: "Unauthorized"
             }).end()
         }

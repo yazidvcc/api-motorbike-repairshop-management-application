@@ -23,6 +23,17 @@ const photo = async (req, res, next) => {
     }
 }
 
+const get = async (req, res, next) => {
+    try {
+        const result = await mechanicService.get(req.params.mechanicId)
+        res.status(200).json({
+            data: result
+        })
+    } catch (e) {
+        next(e)
+    }
+}
+
 const search = async (req, res, next) => {
     try {
         const request = {
@@ -79,5 +90,6 @@ export default {
     search,
     update,
     remove,
-    getPhoto
+    getPhoto,
+    get
 }

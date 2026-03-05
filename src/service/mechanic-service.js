@@ -63,6 +63,30 @@ const photo = async (mechanicId, request) => {
 
 }
 
+const get = async (mechanicId) => {
+    
+    mechanicId = validate(idMechanicValidation, mechanicId)
+
+    const mechanic = await prismaClient.mechanic.findUnique({
+        where: {
+            id: mechanicId
+        },
+        select: {
+            id: true,
+            name: true,
+            phone: true,
+            address: true
+        }
+    })
+
+    if (!mechanic) {
+        throw new ResponseError(404, "Mechanic not found")
+    }
+
+    return mechanic
+
+}
+
 const search = async (request) => {
 
     request = validate(searchMechanicValidation, request)
@@ -196,5 +220,6 @@ export default {
     search,
     update,
     remove,
-    getPhoto
+    getPhoto,
+    get
 }

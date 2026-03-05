@@ -1,10 +1,10 @@
-import prismaClient from "../application/database"
-import ResponseError from "../error/response-error"
-import validate from "../validation/validation"
+import prismaClient from "../application/database.js"
+import ResponseError from "../error/response-error.js"
+import validate from "../validation/validation.js"
 import { v4 as uuid } from "uuid"
-import { depth } from "../application/depht"
+import { depth } from "../application/depht.js"
 import path from "path"
-import { createMechanicValidation, createMechanicPhotoValidation, searchMechanicValidation, updateMechaniceValidation, deleteMechanicValidation, idMechanicValidation } from "../validation/mechanic-validation"
+import { createMechanicValidation, createMechanicPhotoValidation, searchMechanicValidation, updateMechaniceValidation, idMechanicValidation } from "../validation/mechanic-validation.js"
 
 
 const create = async (request) => {

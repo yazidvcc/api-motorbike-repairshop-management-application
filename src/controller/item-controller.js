@@ -1,4 +1,4 @@
-import itemService from "../service/item-service"
+import itemService from "../service/item-service.js"
 
 const create = async (req, res, next) => {
     try {
@@ -51,10 +51,48 @@ const remove = async (req, res, next) => {
     }
 }
 
+const search = async (req, res, next) => {
+    try {
+        const request = {
+            name: req.query.name,
+            page: req.query.page,
+            size: req.query.size
+        }
+
+        const result = await itemService.search(request)
+        res.status(200).json(result)
+    } catch (e) {
+        next(e)
+    }
+}
+
+const photo = async (req, res, next) => {
+    try {
+        const result = await itemService.photo(req.params.itemId, req.files.photo)
+        res.status(201).json({
+            data: result
+        })
+    } catch (e) {
+        next(e)
+    }
+}
+
+const getPhoto = async (req, res, next) => {
+    try {
+        const result = await itemService.getPhoto(req.params.itemId)
+        res.status(200).sendFile(result)
+    } catch (e) {
+        next(e)
+    }
+}
+
 
 export default {
     create,
     update,
     get,
-    remove
+    remove,
+    search,
+    photo,
+    getPhoto
 }

@@ -1,8 +1,8 @@
 import request from "supertest"
-import { web } from "../application/web"
-import { depth } from "../application/depht"
-import prismaClient from "../application/database"
-import { createItem } from "./test-util"
+import { web } from "../application/web.js"
+import { depth } from "../application/depht.js"
+import prismaClient from "../application/database.js"
+import { createItem, createManyItem } from "./test-util.js"
 
 describe("POST /api/items", () => {
 
@@ -256,3 +256,208 @@ describe("DELETE /api/items/itemId", () => {
     })
 })
 
+describe("GET /api/itemss", () => {
+    beforeEach(async () => {
+        await createManyItem()
+    })
+
+    afterEach(async () => {
+        await prismaClient.item.deleteMany()
+    })
+
+    it("should success search items", async () => {
+        const loginResponse = await request(web).post("/api/users/login").send({
+            username: "test",
+            password: "test"
+        })
+
+        const response = await request(web).get("/api/items")
+            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .query({
+                name: "test",
+                page: 1,
+                size: 5
+            })
+
+        depth(response.body)
+
+        expect(response.status).toBe(200)
+        expect(response.body.data).toBeDefined()
+        expect(response.body.data.length).toBe(5)
+    })
+
+    it("should not found items", async () => {
+        const loginResponse = await request(web).post("/api/users/login").send({
+            username: "test",
+            password: "test"
+        })
+
+        const response = await request(web).get("/api/items")
+            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .query({
+                name: "apa",
+                page: 1,
+                size: 5
+            })
+
+        depth(response.body)
+
+        expect(response.status).toBe(200)
+        expect(response.body.data).toBeDefined()
+        expect(response.body.data.length).toBe(0)
+        expect(response.body.paging.total_item).toBe(0)
+        expect(response.body.paging.total_page).toBe(0)
+    })
+
+    it("shoudl success search item with set page and size", async () => {
+        const loginResponse = await request(web).post("/api/users/login").send({
+            username: "test",
+            password: "test"
+        })
+
+        const response = await request(web).get("/api/items")
+            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .query({
+                name: "test",
+                page: 2,
+                size: 15
+            })
+
+        depth(response.body)
+
+        expect(response.status).toBe(200)
+        expect(response.body.data).toBeDefined()
+        expect(response.body.data.length).toBe(5)
+        expect(response.body.paging.total_item).toBe(20)
+        expect(response.body.paging.total_page).toBe(2)
+    })
+})
+
+describe("POST /api/items/itemId/photo", () => {
+
+    afterEach(async () => {
+        await prismaClient.item.deleteMany()
+    })
+
+    it("should success upload photo", async () => {
+        const loginResponse = await request(web).post("/api/users/login").send({
+            username: "test",
+            password: "test"
+        })
+
+        const item = await createItem()
+
+        const response = await request(web).post(`/api/items/${item.id}/photo`)
+            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Content-Type", "multipart/form-data")
+            .attach("photo", __dirname + "/filetest/ayampenyet.jpeg")
+
+        depth(response.body)
+
+        expect(response.status).toBe(201)
+        expect(response.body.data).toBeDefined()
+        expect(response.body.data.photo).toBeDefined()
+    })
+
+    it("should reject if item not found", async () => {
+        const loginResponse = await request(web).post("/api/users/login").send({
+            username: "test",
+            password: "test"
+        })
+
+        const response = await request(web).post(`/api/items/123/photo`)
+            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Content-Type", "multipart/form-data")
+            .attach("photo", __dirname + "/filetest/ayampenyet.jpeg")
+
+        depth(response.body)
+
+        expect(response.status).toBe(404)
+        expect(response.body.errors).toBeDefined()
+    })
+
+    it("should reject if photo is invalid", async () => {
+        const loginResponse = await request(web).post("/api/users/login").send({
+            username: "test",
+            password: "test"
+        })
+
+        const item = await createItem()
+
+        const response = await request(web).post(`/api/items/${item.id}/photo`)
+            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Content-Type", "multipart/form-data")
+            .attach("photo", __dirname + "/filetest/text.txt")
+
+        depth(response.body)
+
+        expect(response.status).toBe(400)
+        expect(response.body.errors).toBeDefined()
+    })
+
+    
+})
+
+describe("GET /api/items/itemId/photo", () => {
+
+    afterEach(async () => {
+        await prismaClient.item.deleteMany()
+    })
+
+    it("should success get photo item", async () => {
+        const loginResponse = await request(web).post("/api/users/login").send({
+            username: "test",
+            password: "test"
+        })
+
+        const item = await createItem()
+
+        const addPhotoResponse = await request(web).post(`/api/items/${item.id}/photo`)
+            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Content-Type", "multipart/form-data")
+            .attach("photo", __dirname + "/filetest/ayampenyet.jpeg")
+
+        const response = await request(web).get(`/api/items/${item.id}/photo`)
+            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+
+        depth(response.body)
+
+        expect(response.status).toBe(200)
+        expect(response.get("Content-Type")).toBe("image/jpeg")
+        
+    })
+
+    it("should reject if item not found", async () => {
+        const loginResponse = await request(web).post("/api/users/login").send({
+            username: "test",
+            password: "test"
+        })
+
+        const response = await request(web).get(`/api/items/123/photo`)
+            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+
+        depth(response.body)
+
+        expect(response.status).toBe(404)
+        expect(response.body.errors).toBeDefined()
+    })
+
+    it("should reject if photo not found", async () => {
+        const loginResponse = await request(web).post("/api/users/login").send({
+            username: "test",
+            password: "test"
+        })
+
+        const item = await createItem()
+
+        const response = await request(web).get(`/api/items/${item.id}/photo`)
+            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+
+        depth(response.body)
+
+        expect(response.status).toBe(200)
+        expect(response.get("Content-Type")).toBe("image/png")
+        
+    })
+
+})

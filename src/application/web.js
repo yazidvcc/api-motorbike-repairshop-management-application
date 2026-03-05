@@ -6,7 +6,6 @@ import expressFileUpload from 'express-fileupload'
 import path from "path"
 
 const web = express();
-web.use("/mechanic", express.static(path.resolve(__dirname, "../../storage/mechanic")))
 web.use(express.json());
 web.use(expressFileUpload())
 web.use(publicRouter);

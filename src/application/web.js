@@ -3,7 +3,6 @@ import publicRouter from '../route/public-api.js';
 import errorMiddleware from '../middleware/error-middleware.js';
 import userRouter from '../route/api.js';
 import expressFileUpload from 'express-fileupload'
-import path from "path"
 
 const web = express();
 web.use(express.json());

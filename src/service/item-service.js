@@ -2,6 +2,7 @@ import prismaClient from "../application/database.js"
 import validate from "../validation/validation.js"
 import ResponseError from "../error/response-error.js"
 import path from "path"
+import { __dirname } from "../../public/main.js"
 import { v4 as uuid } from "uuid"
 import { createItemValidation, updateItemValidation, idItemValidation,  searchItemValidation, createItemPhotoValidation } from "../validation/item-validation.js"
 
@@ -172,7 +173,7 @@ const photo = async (itemId, request) => {
 
     const fileName = `${item.id}${uuid().toString().replace(/-/g, "")}.${request.name.split(".").pop()}`
 
-    const storagePath = path.resolve(__dirname, "../../storage/item", fileName)
+    const storagePath = path.resolve(__dirname, "../storage/item", fileName)
 
     await request.mv(storagePath)
 
@@ -206,10 +207,10 @@ const getPhoto = async (itemId) => {
     }
 
     if (!item.photo) {
-        return path.resolve(__dirname, "../../storage/item/not-found.png")
+        return path.resolve(__dirname, "../storage/item/not-found.png")
     }
 
-    return path.resolve(__dirname, "../../storage/item", item.photo)
+    return path.resolve(__dirname, "../storage/item", item.photo)
 }
 
 export default {

@@ -1,9 +1,10 @@
 import prismaClient from "../application/database.js"
 import ResponseError from "../error/response-error.js"
 import validate from "../validation/validation.js"
+import path from "path"
+import { __dirname } from "../../public/main.js"
 import { v4 as uuid } from "uuid"
 import { depth } from "../application/depht.js"
-import path from "path"
 import { createMechanicValidation, createMechanicPhotoValidation, searchMechanicValidation, updateMechaniceValidation, idMechanicValidation } from "../validation/mechanic-validation.js"
 
 
@@ -44,7 +45,7 @@ const photo = async (mechanicId, request) => {
 
     const fileNamed = `${mechanic.id}${uuid().toString().replace(/-/g, "")}.${request.name.split(".").pop()}`
 
-    const storagePath = path.resolve(__dirname, "../../storage/mechanic", fileNamed)
+    const storagePath = path.resolve(__dirname, "../storage/mechanic", fileNamed)
     await request.mv(storagePath)
 
     return prismaClient.mechanic.update({
@@ -182,10 +183,10 @@ const getPhoto = async (mechanicId) => {
     }
 
     if (!mechanic.photo) {
-        return path.resolve(__dirname, "../../storage/mechanic/not-found.png")
+        return path.resolve(__dirname, "../storage/mechanic/not-found.png")
     }
 
-    return path.resolve(__dirname, "../../storage/mechanic", mechanic.photo)
+    return path.resolve(__dirname, "../storage/mechanic", mechanic.photo)
 
 }
 

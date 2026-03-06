@@ -2,13 +2,14 @@ import prismaClient from "../application/database.js"
 import validate from "../validation/validation.js"
 import ResponseError from "../error/response-error.js"
 import path from "path"
-import { __dirname } from "../../public/main.js"
+import { rootPath } from "../application/root-path.js"
 import { v4 as uuid } from "uuid"
-import { createItemValidation, updateItemValidation, idItemValidation,  searchItemValidation, createItemPhotoValidation } from "../validation/item-validation.js"
+import { createItemValidation, updateItemValidation, idItemValidation, searchItemValidation, createItemPhotoValidation } from "../validation/item-validation.js"
+import { depth } from "../application/depht.js"
 
 
 const create = async (request) => {
-    
+
     request = validate(createItemValidation, request)
 
     const countInDatabase = await prismaClient.item.count({
@@ -19,7 +20,7 @@ const create = async (request) => {
         }
     })
 
-    if(countInDatabase > 0) {
+    if (countInDatabase > 0) {
         throw new ResponseError(400, "Item already exists")
     }
 
@@ -39,7 +40,7 @@ const create = async (request) => {
 }
 
 const update = async (request) => {
-    
+
     request = validate(updateItemValidation, request)
 
     const countInDatabase = await prismaClient.item.count({
@@ -48,7 +49,7 @@ const update = async (request) => {
         }
     })
 
-    if(countInDatabase === 0) {
+    if (countInDatabase === 0) {
         throw new ResponseError(404, "Item not found")
     }
 
@@ -83,16 +84,16 @@ const get = async (itemId) => {
         }
     })
 
-    if(!item) {
+    if (!item) {
         throw new ResponseError(404, "Item not found")
     }
 
     return item
-    
+
 }
 
 const remove = async (itemId) => {
-    
+
     itemId = validate(idItemValidation, itemId)
 
     const item = await prismaClient.item.findUnique({
@@ -101,7 +102,7 @@ const remove = async (itemId) => {
         }
     })
 
-    if(!item) {
+    if (!item) {
         throw new ResponseError(404, "Item not found")
     }
 
@@ -113,7 +114,7 @@ const remove = async (itemId) => {
 }
 
 const search = async (request) => {
-    
+
     request = validate(searchItemValidation, request)
 
     const skip = (request.page - 1) * request.size
@@ -135,14 +136,14 @@ const search = async (request) => {
         orderBy: {
             name: "asc"
         }
-    })   
-    
+    })
+
     const count = await prismaClient.item.count({
         where: {
             AND: filters
         }
     })
-    
+
     return {
         data: items,
         paging: {
@@ -151,7 +152,7 @@ const search = async (request) => {
             total_page: Math.ceil(count / request.size)
         }
     }
-    
+
 }
 
 const photo = async (itemId, request) => {
@@ -173,7 +174,9 @@ const photo = async (itemId, request) => {
 
     const fileName = `${item.id}${uuid().toString().replace(/-/g, "")}.${request.name.split(".").pop()}`
 
-    const storagePath = path.resolve(__dirname, "../storage/item", fileName)
+    const storagePath = path.resolve(rootPath, "storage/item", fileName)
+
+    depth(storagePath)
 
     await request.mv(storagePath)
 
@@ -202,15 +205,15 @@ const getPhoto = async (itemId) => {
         }
     })
 
-    if(!item) {
+    if (!item) {
         throw new ResponseError(404, "Item not found")
     }
 
     if (!item.photo) {
-        return path.resolve(__dirname, "../storage/item/not-found.png")
+        return path.resolve(rootPath, "storage/item/not-found.png")
     }
 
-    return path.resolve(__dirname, "../storage/item", item.photo)
+    return path.resolve(rootPath, "storage/item", item.photo)
 }
 
 export default {

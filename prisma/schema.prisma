@@ -51,6 +51,7 @@ model Order {
   type          Type     @default(transaction)
   total_part    Int?     @db.Int
   total_service Int?     @db.Int
+  service_description String? @db.VarChar(255)
   date          DateTime @default(now()) @db.Timestamp(0)
   mechanic_id   Int?
 

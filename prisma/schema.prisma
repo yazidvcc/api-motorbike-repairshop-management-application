@@ -12,9 +12,9 @@ datasource db {
 
 model User {
   id       Int     @id @default(autoincrement())
-  username String  @unique @db.VarChar(100) 
+  username String  @unique @db.VarChar(100)
   password String  @db.VarChar(100)
-  token    String? @unique @db.VarChar(255) 
+  token    String? @unique @db.VarChar(255)
 
   @@map("users")
 }
@@ -26,7 +26,7 @@ model Mechanic {
   address String? @db.VarChar(255)
   photo String? @db.VarChar(255)
   orders Order[]
-  
+
   @@map("mechanics")
 }
 
@@ -37,7 +37,7 @@ model Item {
   stock Int @db.Int
   photo String? @db.VarChar(255)
   orderDetail OrderDetail[]
-  
+
   @@map("items")
 }
 
@@ -47,23 +47,28 @@ enum Type {
 }
 
 model Order {
-  id Int @id @default(autoincrement())
-  type Type @default(transaction)
-  mechanic_id Int?
-  mechanic Mechanic? @relation(fields: [mechanic_id], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  id            Int      @id @default(autoincrement())
+  type          Type     @default(transaction)
+  total_part    Int?     @db.Int
+  total_service Int?     @db.Int
+  date          DateTime @default(now()) @db.Timestamp(0)
+  mechanic_id   Int?
+
+  mechanic    Mechanic?     @relation(fields: [mechanic_id], references: [id], onDelete: NoAction, onUpdate: Cascade)
   orderDetail OrderDetail[]
 
   @@map("orders")
 }
 
 model OrderDetail {
-  id Int @id @default(autoincrement())
+  id       Int @id @default(autoincrement())
   order_id Int
-  item_id Int
+  item_id  Int
   quantity Int @db.SmallInt
 
   order Order @relation(fields: [order_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  item Item @relation(fields: [item_id], references: [id], onDelete: NoAction, onUpdate: Cascade) 
+  item  Item  @relation(fields: [item_id], references: [id], onDelete: NoAction, onUpdate: Cascade)
 
+  @@unique([order_id, item_id])
   @@map("order_details")
 }

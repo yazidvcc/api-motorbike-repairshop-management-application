@@ -188,6 +188,41 @@ describe("GET /api/mechanics", () => {
     })
 })
 
+describe("GET /api/mechanics/mechanicId", () => {
+    
+    afterEach(async () => {
+        await prismaClient.mechanic.deleteMany()
+    })
+
+    it("should success get mechanic", async () => {
+        const loginResponse = await request(web).post("/api/users/login").send({
+            username: "test",
+            password: "test"
+        })
+
+        const addMechanic = await mechanicRegister()
+
+        const response = await request(web).get(`/api/mechanics/${addMechanic.id}`)
+            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+
+        expect(response.status).toBe(200)
+        expect(response.body.data).toBeDefined()
+    })
+
+    it("should reject if mechanic not found", async () => {
+        const loginResponse = await request(web).post("/api/users/login").send({
+            username: "test",
+            password: "test"
+        })
+
+        const response = await request(web).get(`/api/mechanics/12345`)
+            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+
+        expect(response.status).toBe(404)
+        expect(response.body.errors).toBeDefined()
+    })
+})
+
 describe("PUT /api/mechanics/mechanicId", () => {
 
     beforeEach(async () => {

@@ -12,6 +12,7 @@ userRouter.post("/api/users/logout", userController.logout)
 
 userRouter.post("/api/mechanics", mechanicController.create)
 userRouter.get("/api/mechanics", mechanicController.search)
+userRouter.get("/api/mechanics/:mechanicId", mechanicController.get)
 userRouter.put("/api/mechanics/:mechanicId", mechanicController.update)
 userRouter.delete("/api/mechanics/:mechanicId", mechanicController.remove)
 userRouter.post("/api/mechanics/:mechanicId/photo", mechanicController.photo)

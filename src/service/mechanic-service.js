@@ -1,11 +1,11 @@
 import prismaClient from "../application/database.js"
 import ResponseError from "../error/response-error.js"
 import validate from "../validation/validation.js"
+import path from "path"
+import { rootPath } from "../application/root-path.js"
 import { v4 as uuid } from "uuid"
 import { depth } from "../application/depht.js"
-import path from "path"
 import { createMechanicValidation, createMechanicPhotoValidation, searchMechanicValidation, updateMechaniceValidation, idMechanicValidation } from "../validation/mechanic-validation.js"
-
 
 const create = async (request) => {
 
@@ -44,7 +44,7 @@ const photo = async (mechanicId, request) => {
 
     const fileNamed = `${mechanic.id}${uuid().toString().replace(/-/g, "")}.${request.name.split(".").pop()}`
 
-    const storagePath = path.resolve(__dirname, "../../storage/mechanic", fileNamed)
+    const storagePath = path.resolve(rootPath, "storage/mechanic", fileNamed)
     await request.mv(storagePath)
 
     return prismaClient.mechanic.update({
@@ -59,6 +59,30 @@ const photo = async (mechanicId, request) => {
             photo: true
         }
     })
+
+}
+
+const get = async (mechanicId) => {
+
+    mechanicId = validate(idMechanicValidation, mechanicId)
+
+    const mechanic = await prismaClient.mechanic.findUnique({
+        where: {
+            id: mechanicId
+        },
+        select: {
+            id: true,
+            name: true,
+            phone: true,
+            address: true
+        }
+    })
+
+    if (!mechanic) {
+        throw new ResponseError(404, "Mechanic not found")
+    }
+
+    return mechanic
 
 }
 
@@ -182,10 +206,10 @@ const getPhoto = async (mechanicId) => {
     }
 
     if (!mechanic.photo) {
-        return path.resolve(__dirname, "../../storage/mechanic/not-found.png")
+        return path.resolve(rootPath, "storage/mechanic/not-found.png")
     }
 
-    return path.resolve(__dirname, "../../storage/mechanic", mechanic.photo)
+    return path.resolve(rootPath, "storage/mechanic", mechanic.photo)
 
 }
 
@@ -195,5 +219,6 @@ export default {
     search,
     update,
     remove,
-    getPhoto
+    getPhoto,
+    get
 }

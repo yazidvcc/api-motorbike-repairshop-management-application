@@ -3,6 +3,7 @@ import authMiddleware from "../middleware/auth-middleware.js"
 import userController from "../controller/user-controller.js"
 import mechanicController from "../controller/mechanic-controller.js"
 import itemController from "../controller/item-controller.js"
+import orderController from "../controller/order-controller.js"
 
 const userRouter = new express.Router()
 
@@ -25,5 +26,7 @@ userRouter.put("/api/items/:itemId", itemController.update)
 userRouter.delete("/api/items/:itemId", itemController.remove)
 userRouter.post("/api/items/:itemId/photo", itemController.photo)
 userRouter.get("/api/items/:itemId/photo", itemController.getPhoto)
+
+userRouter.post("/api/orders", orderController.create)
 
 export default userRouter;

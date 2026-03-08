@@ -20,6 +20,10 @@ const mechanicRegister = async () => {
             name: "test",
             phone: "0895600436143",
             address: "Jalan jalan"
+        },
+        select: {
+            id: true,
+            name: true
         }
     })
 }
@@ -51,10 +55,10 @@ const getMechanic = async () => {
     
 }
 
-const createItem = async () => {
+const createItem = async (name = "test") => {
     return prismaClient.item.create({
         data: {
-            name: "test",
+            name: name,
             price: 10000,
             stock: 10
         },

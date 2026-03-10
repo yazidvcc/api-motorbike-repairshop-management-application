@@ -28,5 +28,6 @@ userRouter.post("/api/items/:itemId/photo", itemController.photo)
 userRouter.get("/api/items/:itemId/photo", itemController.getPhoto)
 
 userRouter.post("/api/orders", orderController.create)
+userRouter.get("/api/orders", orderController.search)
 
 export default userRouter;

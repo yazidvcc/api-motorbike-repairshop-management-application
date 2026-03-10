@@ -2,10 +2,8 @@ import request from "supertest"
 import prismaClient from "../application/database.js"
 import { web } from "../application/web.js"
 import { logger } from "../application/logging.js"
-import { mechanicRegister, userRegister, createManyMechanic, getMechanic } from "./test-util.js"
+import { createMechanic, userRegister, createManyMechanic, getMechanic } from "./test-util.js"
 import { depth } from "../application/depht.js"
-
-
 
 describe("POST /api/mechanics", () => {
 
@@ -61,7 +59,7 @@ describe("POST /api/mechanics/mechanicId/photo", () => {
             password: "test"
         })
 
-        const mechanic = await mechanicRegister()
+        const mechanic = await createMechanic()
 
         const response = await request(web).post(`/api/mechanics/${mechanic.id}/photo`)
             .set("Authorization", "Bearer " + loginResponse.body.data.token)
@@ -96,7 +94,7 @@ describe("POST /api/mechanics/mechanicId/photo", () => {
             password: "test"
         })
 
-        const mechanic = await mechanicRegister()
+        const mechanic = await createMechanic()
 
         const response = await request(web).post(`/api/mechanics/${mechanic.id}/photo`)
             .set("Authorization", "Bearer " + loginResponse.body.data.token)
@@ -108,7 +106,7 @@ describe("POST /api/mechanics/mechanicId/photo", () => {
     })
     
     it("should reject if user is not authorization", async () => {
-        const mechanic = await mechanicRegister()
+        const mechanic = await createMechanic()
 
         const response = await request(web).post(`/api/mechanics/${mechanic.id}/photo`)
             .set("Content-Type", "multipart/form-data")
@@ -200,7 +198,7 @@ describe("GET /api/mechanics/mechanicId", () => {
             password: "test"
         })
 
-        const addMechanic = await mechanicRegister()
+        const addMechanic = await createMechanic()
 
         const response = await request(web).get(`/api/mechanics/${addMechanic.id}`)
             .set("Authorization", "Bearer " + loginResponse.body.data.token)

@@ -2,7 +2,7 @@ import request from "supertest"
 import prismaClient from "../application/database"
 import { web } from "../application/web"
 import { depth } from "../application/depht"
-import { createItem, getMechanic, mechanicRegister } from "./test-util"
+import { createItem, createManyOrder, getMechanic, mechanicRegister } from "./test-util"
 
 describe("POST /api/orders", () => {
 
@@ -21,12 +21,12 @@ describe("POST /api/orders", () => {
 
         for (let i = 1; i <= 2; i++) {
             let item = await createItem("test" + i)
-            items.push({ 
+            items.push({
                 item_id: item.id,
                 quantity: i * 2
             })
-        }   
-        
+        }
+
         const response = await request(web).post("/api/orders")
             .set("Authorization", "Bearer " + loginResponse.body.data.token)
             .set("Content-Type", "application/json")
@@ -55,14 +55,14 @@ describe("POST /api/orders", () => {
 
         for (let i = 1; i <= 2; i++) {
             let item = await createItem("test" + i)
-            items.push({ 
+            items.push({
                 item_id: item.id,
                 quantity: i * 2
             })
         }
 
         const mechanic = await mechanicRegister()
-        
+
         const response = await request(web).post("/api/orders")
             .set("Authorization", "Bearer " + loginResponse.body.data.token)
             .set("Content-Type", "application/json")
@@ -89,7 +89,7 @@ describe("POST /api/orders", () => {
             username: "test",
             password: "test"
         })
-        
+
         const response = await request(web).post("/api/orders")
             .set("Authorization", "Bearer " + loginResponse.body.data.token)
             .set("Content-Type", "application/json")
@@ -119,12 +119,12 @@ describe("POST /api/orders", () => {
 
         for (let i = 1; i <= 2; i++) {
             let item = await createItem("test" + i)
-            items.push({ 
+            items.push({
                 item_id: item.id,
                 quantity: 999
             })
-        }   
-        
+        }
+
         const response = await request(web).post("/api/orders")
             .set("Authorization", "Bearer " + loginResponse.body.data.token)
             .set("Content-Type", "application/json")
@@ -149,11 +149,11 @@ describe("POST /api/orders", () => {
 
         for (let i = 1; i <= 2; i++) {
             let item = await createItem("test" + i)
-            items.push({ 
+            items.push({
                 item_id: item.id,
                 quantity: i * 2
             })
-        }   
+        }
 
         const response = await request(web).post("/api/orders")
             .set("Authorization", "Bearer " + loginResponse.body.data.token)
@@ -167,6 +167,121 @@ describe("POST /api/orders", () => {
 
         expect(response.status).toBe(400)
         expect(response.body.errors).toBeDefined()
+    })
+
+})
+
+describe("GET /api/orders", () => {
+
+    beforeEach(async () => {
+        await createManyOrder()
+    })
+
+    afterEach(async () => {
+        await prismaClient.orderDetail.deleteMany()
+        await prismaClient.order.deleteMany()
+        await prismaClient.mechanic.deleteMany()
+    })
+
+    it("should success search orders", async () => {
+        const loginResponse = await request(web).post("/api/users/login").send({
+            username: "test",
+            password: "test"
+        })
+
+        const response = await request(web).get("/api/orders")
+            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            
+
+        depth(response.body)
+
+        expect(response.status).toBe(200)
+        expect(response.body.data).toBeDefined()
+        expect(response.body.data.length).toBe(10)
+        expect(response.body.paging.total_page).toBe(1)
+    })
+
+    it("should success search orders type services", async () => {
+        const loginResponse = await request(web).post("/api/users/login").send({
+            username: "test",
+            password: "test"
+        })
+
+        const response = await request(web).get("/api/orders")
+            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .query({
+                service_description: "Service motor"
+            })
+            
+
+        depth(response.body)
+
+        expect(response.status).toBe(200)
+        expect(response.body.data).toBeDefined()
+        expect(response.body.data.length).toBe(0)
+        expect(response.body.paging.total_page).toBe(0)
+    })
+
+    it("should success search orders with request date", async () => {
+        const loginResponse = await request(web).post("/api/users/login").send({
+            username: "test",
+            password: "test"
+        })
+
+        const response = await request(web).get("/api/orders")
+            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .query({
+                date_start: "2026-01-03 00:00:00",
+                date_end: "2026-10-03 00:00:00"
+            })
+            
+
+        depth(response.body)
+
+        expect(response.status).toBe(200)
+        expect(response.body.data).toBeDefined()
+        expect(response.body.data.length).toBe(10)
+        expect(response.body.paging.total_page).toBe(1)
+    })
+
+    it("should reject if type is invalid", async () => {
+        const loginResponse = await request(web).post("/api/users/login").send({
+            username: "test",
+            password: "test"
+        })
+
+        const response = await request(web).get("/api/orders")
+            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .query({
+                type: "invalid"
+            })
+            
+
+        depth(response.body)
+
+        expect(response.status).toBe(400)
+        expect(response.body.errors).toBeDefined()
+    })
+
+     it("should success with request size", async () => {
+        const loginResponse = await request(web).post("/api/users/login").send({
+            username: "test",
+            password: "test"
+        })
+
+        const response = await request(web).get("/api/orders")
+            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .query({
+                size: 5
+            })
+            
+
+        depth(response.body)
+
+        expect(response.status).toBe(200)
+        expect(response.body.data).toBeDefined()
+        expect(response.body.data.length).toBe(5)
+        expect(response.body.paging.total_page).toBe(2)
     })
 
 })

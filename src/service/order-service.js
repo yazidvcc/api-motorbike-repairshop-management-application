@@ -1,7 +1,8 @@
-import prismaClient from "../application/database"
-import ResponseError from "../error/response-error"
-import { createOrderValidation } from "../validation/order-validation"
-import validate from "../validation/validation"
+import { totalmem, type } from "os"
+import prismaClient from "../application/database.js"
+import ResponseError from "../error/response-error.js"
+import { createOrderValidation, searchOrderValidation } from "../validation/order-validation.js"
+import validate from "../validation/validation.js"
 
 const create = async (request) => {
 
@@ -63,6 +64,98 @@ const create = async (request) => {
 
 }
 
+const search = async (request) => {
+
+    request = validate(searchOrderValidation, request)
+
+    const skip = (request.page - 1) * request.size
+
+    const filters = [
+        {
+            type: {
+                equals: request.type
+            }
+        },
+        {
+            date: {
+                gte: request.date_start,
+                lte: request.date_end
+            }
+        }
+    ]
+
+    if (request.service_description) {
+        filters.push({
+            service_description: {
+                contains: request.service_description
+            }
+        })
+    }
+
+    if (request.name_mechanic) {
+        filters.push({
+            mechanic: {
+                name: {
+                    contains: request.name_mechanic
+                }
+            }
+        })
+    }
+
+    const [orders, count] = await prismaClient.$transaction([
+        prismaClient.order.findMany({
+            where: {
+                AND: filters
+            },
+            skip: skip,
+            take: request.size,
+            orderBy: {
+                date: "desc"
+            },
+            select: {
+                id: true,
+                type: true,
+                date: true,
+                total_part: true,
+                total_service: true,
+                service_description: true,
+                mechanic: {
+                    select: {
+                        id: true,
+                        name: true
+                    }
+                },
+                orderDetail: {
+                    select: {
+                        item: {
+                            select: {
+                                id: true,
+                                name: true
+                            }
+                        },
+                        quantity: true
+                    }
+                }
+            }
+        }),
+        prismaClient.order.count({
+            where: {
+                AND: filters
+            }
+        })
+    ])
+
+    return {
+        data: orders,
+        paging: {
+            page: request.page,
+            total_item: count,
+            total_page: Math.ceil(count / request.size)
+        }
+    }
+}
+
 export default {
-    create
+    create,
+    search
 }

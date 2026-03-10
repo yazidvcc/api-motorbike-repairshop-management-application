@@ -21,7 +21,10 @@ const searchOrderValidation = Joi.object({
     size: Joi.number().min(1).max(100).default(10).optional()
 })
 
+const idOrderValidation = Joi.number().required()
+
 export {
     createOrderValidation,
-    searchOrderValidation
+    searchOrderValidation,
+    idOrderValidation
 }

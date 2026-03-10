@@ -1,7 +1,7 @@
 import { totalmem, type } from "os"
 import prismaClient from "../application/database.js"
 import ResponseError from "../error/response-error.js"
-import { createOrderValidation, searchOrderValidation } from "../validation/order-validation.js"
+import { createOrderValidation, idOrderValidation, searchOrderValidation } from "../validation/order-validation.js"
 import validate from "../validation/validation.js"
 
 const create = async (request) => {
@@ -155,7 +155,50 @@ const search = async (request) => {
     }
 }
 
+const get = async (orderId) => {
+    
+    orderId = validate(idOrderValidation, orderId)
+
+    const order = await prismaClient.order.findUnique({
+        where: {
+            id: orderId
+        },
+        select: {
+            id: true,
+            type: true,
+            date: true,
+            total_part: true,
+            total_service: true,
+            service_description: true,
+            mechanic: {
+                select: {
+                    id: true,
+                    name: true
+                }
+            },
+            orderDetail: {
+                select: {
+                    item: {
+                        select: {
+                            id: true,
+                            name: true
+                        }
+                    },
+                    quantity: true
+                }
+            }
+        }
+    })
+
+    if (!order) {
+        throw new ResponseError(404, "Order not found")
+    }
+
+    return order
+}
+
 export default {
     create,
-    search
+    search,
+    get
 }

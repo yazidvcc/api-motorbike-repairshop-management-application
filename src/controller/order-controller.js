@@ -20,7 +20,18 @@ const search = async (req, res, next) => {
     }
 }
 
+const get = async (req, res, next) => {
+    try {
+        const result = await orderService.get(req.params.orderId)
+        res.status(200).json({
+            data: result
+        })
+    } catch (e) {
+        next(e)
+    }
+}
 export default {
     create,
-    search
+    search,
+    get
 }

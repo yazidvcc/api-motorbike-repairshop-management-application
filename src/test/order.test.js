@@ -285,3 +285,35 @@ describe("GET /api/orders", () => {
     })
 
 })
+
+describe("GET /api/orders/orderId", () => {
+    
+    beforeEach(async () => {
+        await createManyOrder()
+    })
+
+    afterEach(async () => {
+        await prismaClient.orderDetail.deleteMany()
+        await prismaClient.order.deleteMany()
+        await prismaClient.mechanic.deleteMany()
+    })
+
+    it("should success get order by id", async () => {
+        const loginResponse = await request(web).post("/api/users/login").send({
+            username: "test",
+            password: "test"
+        })
+
+        const order = await prismaClient.order.findFirst()
+
+        const response = await request(web).get(`/api/orders/${order.id}`)
+            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+
+        depth(response.body)
+
+        expect(response.status).toBe(200)
+        expect(response.body.data).toBeDefined()
+        expect(response.body.data.id).toBe(order.id)
+    })
+
+})

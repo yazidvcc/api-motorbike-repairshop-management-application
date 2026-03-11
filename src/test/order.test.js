@@ -317,3 +317,63 @@ describe("GET /api/orders/orderId", () => {
     })
 
 })
+
+describe("DELETE /api/orders/orderId", () => {
+
+    beforeEach(async () => {
+        await createManyOrder()
+    })
+
+    afterEach(async () => {
+        await prismaClient.orderDetail.deleteMany()
+        await prismaClient.order.deleteMany()
+        await prismaClient.mechanic.deleteMany()
+    })
+
+    it("should success delete order by id", async () => {
+        const loginResponse = await request(web).post("/api/users/login").send({
+            username: "test",
+            password: "test"
+        })
+
+        const order = await prismaClient.order.findFirst()
+
+        const response = await request(web).delete(`/api/orders/${order.id}`)
+            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+
+        depth(response.body)
+
+        expect(response.status).toBe(200)
+        expect(response.body.data).toBe("OK")
+    })
+
+    it("should reject if order id is not found", async () => {
+        const loginResponse = await request(web).post("/api/users/login").send({
+            username: "test",
+            password: "test"
+        })
+
+        const response = await request(web).delete(`/api/orders/0`)
+            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+
+        depth(response.body)
+
+        expect(response.status).toBe(404)
+        expect(response.body.errors).toBeDefined()
+    })
+
+    it("should reject if order id is not valid", async () => {
+        const loginResponse = await request(web).post("/api/users/login").send({
+            username: "test",
+            password: "test"
+        })
+
+        const response = await request(web).delete(`/api/orders/invalid`)
+            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+
+        depth(response.body)
+
+        expect(response.status).toBe(400)
+        expect(response.body.errors).toBeDefined()
+    })
+})

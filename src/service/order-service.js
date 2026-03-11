@@ -197,8 +197,37 @@ const get = async (orderId) => {
     return order
 }
 
+const remove = async (orderId) => {
+    
+    orderId = validate(idOrderValidation, orderId)
+
+    const order = await prismaClient.order.findUnique({
+        where: {
+            id: orderId
+        },
+        select: {
+            id: true
+        }
+    })
+
+    if (!order) {
+        throw new ResponseError(404, "Order not found")
+    }
+
+    await prismaClient.order.delete({
+        where: {
+            id: orderId
+        }
+    })
+
+    return {
+        data: "OK"
+    }
+}
+
 export default {
     create,
     search,
-    get
+    get,
+    remove
 }

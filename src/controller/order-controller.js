@@ -30,8 +30,19 @@ const get = async (req, res, next) => {
         next(e)
     }
 }
+
+const remove = async (req, res, next) => {
+    try {
+        const result = await orderService.remove(req.params.orderId)
+        res.status(200).json(result)
+    } catch (e) {
+        next(e)
+    }
+}
+
 export default {
     create,
     search,
-    get
+    get,
+    remove
 }

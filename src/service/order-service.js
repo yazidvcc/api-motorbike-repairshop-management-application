@@ -36,12 +36,22 @@ const create = async (request) => {
 
         let total_part = 0
 
-        items.map((item, index) => {
-            if (item.stock < request.items[index].quantity) {
-                throw new ResponseError(400, `Item ${item.name} stock is not enough`)
+        for (const item in items) {
+            if (items[item].stock < request.items[item].quantity) {
+                throw new ResponseError(400, `Item ${items[item].name} stock is not enough`)
             }
-            total_part += request.items[index].quantity * item.price
-        })
+
+            await prismaClient.item.update({
+                data: {
+                    stock: items[item].stock - request.items[item].quantity
+                },
+                where: {
+                    id: items[item].id
+                }
+            })
+
+            total_part += request.items[item].quantity * items[item].price
+        }
 
         request.total_part = total_part
 
@@ -156,7 +166,7 @@ const search = async (request) => {
 }
 
 const get = async (orderId) => {
-    
+
     orderId = validate(idOrderValidation, orderId)
 
     const order = await prismaClient.order.findUnique({
@@ -198,7 +208,7 @@ const get = async (orderId) => {
 }
 
 const remove = async (orderId) => {
-    
+
     orderId = validate(idOrderValidation, orderId)
 
     const order = await prismaClient.order.findUnique({

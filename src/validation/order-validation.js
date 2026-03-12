@@ -12,7 +12,7 @@ const createOrderValidation = Joi.object({
 })
 
 const searchOrderValidation = Joi.object({
-    type: Joi.string().valid("transaction", "services").default("transaction").optional(),
+    type: Joi.string().valid("transaction", "services").optional(),
     date_start: Joi.date().default(new Date("1970-01-01 00:00:00")).optional(),
     date_end: Joi.date().default(new Date("2099-12-31 00:00:00")).optional(),
     service_description: Joi.string().optional(),

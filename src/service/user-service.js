@@ -46,6 +46,7 @@ const login = async (request) => {
     })
 
     return {
+        username: user.username,
         token: token
     }
 

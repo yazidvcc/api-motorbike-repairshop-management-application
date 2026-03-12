@@ -4,7 +4,14 @@ import prismaClient from "../application/database.js"
 
 const authMiddleware = async (req, res, next) => {
 
-    const token = req.get("Authorization")
+    let token = req.cookies.token;
+    
+    if (!token) {
+        const authHeader = req.get("Authorization");
+        if (authHeader) {
+            token = authHeader.split(" ")[1];
+        }
+    }
 
     if (!token) {
         return res.status(401).json({
@@ -12,7 +19,7 @@ const authMiddleware = async (req, res, next) => {
         }).end()
     }
 
-    const tokenValue = token.split(" ")[1]
+    const tokenValue = token;
 
     jwt.verify(tokenValue, process.env.APP_SECRET, async (err, decoded) => {
 

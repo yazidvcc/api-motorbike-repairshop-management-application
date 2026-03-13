@@ -18,7 +18,7 @@ describe("POST /api/mechanics", () => {
         })
 
         const response = await request(web).post("/api/mechanics")
-            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
             .set("Content-Type", "application/json")
             .send({
                 name: "test"
@@ -35,7 +35,7 @@ describe("POST /api/mechanics", () => {
         })
 
         const response = await request(web).post("/api/mechanics")
-            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
             .set("Content-Type", "application/json")
             .send({
                 name: ""
@@ -62,7 +62,7 @@ describe("POST /api/mechanics/mechanicId/photo", () => {
         const mechanic = await createMechanic()
 
         const response = await request(web).post(`/api/mechanics/${mechanic.id}/photo`)
-            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
             .set("Content-Type", "multipart/form-data")
             .attach("photo", __dirname + "/filetest/ayampenyet.jpeg")
 
@@ -80,7 +80,7 @@ describe("POST /api/mechanics/mechanicId/photo", () => {
         })
 
         const response = await request(web).post(`/api/mechanics/12345/photo`)
-            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
             .set("Content-Type", "multipart/form-data")
             .attach("photo", __dirname + "/filetest/ayampenyet.jpeg")
 
@@ -97,7 +97,7 @@ describe("POST /api/mechanics/mechanicId/photo", () => {
         const mechanic = await createMechanic()
 
         const response = await request(web).post(`/api/mechanics/${mechanic.id}/photo`)
-            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
             .set("Content-Type", "multipart/form-data")
             .attach("photo", __dirname + "/filetest/text.txt")
 
@@ -132,7 +132,7 @@ describe("GET /api/mechanics", () => {
         await createManyMechanic()
 
         const response = await request(web).get("/api/mechanics")
-            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
             .query({
                 name: "test",
             })
@@ -151,7 +151,7 @@ describe("GET /api/mechanics", () => {
         await createManyMechanic()
 
         const response = await request(web).get("/api/mechanics")
-            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
             .query({
                 name: "test",
                 page: 2,
@@ -174,7 +174,7 @@ describe("GET /api/mechanics", () => {
         await createManyMechanic()
 
         const response = await request(web).get("/api/mechanics")
-            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
             .query({
                 name: "test",
                 page: "test",
@@ -201,7 +201,7 @@ describe("GET /api/mechanics/mechanicId", () => {
         const addMechanic = await createMechanic()
 
         const response = await request(web).get(`/api/mechanics/${addMechanic.id}`)
-            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
 
         expect(response.status).toBe(200)
         expect(response.body.data).toBeDefined()
@@ -214,7 +214,7 @@ describe("GET /api/mechanics/mechanicId", () => {
         })
 
         const response = await request(web).get(`/api/mechanics/12345`)
-            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
 
         expect(response.status).toBe(404)
         expect(response.body.errors).toBeDefined()
@@ -240,7 +240,7 @@ describe("PUT /api/mechanics/mechanicId", () => {
         const mechanic = await getMechanic()
 
         const response = await request(web).put(`/api/mechanics/${mechanic.id}`)
-        .set("Authorization", "Bearer " + loginResponse.body.data.token)
+        .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
         .set("Content-Type", "application/json")
         .send({ 
             name: "test nol",
@@ -266,7 +266,7 @@ describe("PUT /api/mechanics/mechanicId", () => {
         depth(loginResponse.body)
 
         const response = await request(web).put(`/api/mechanics/12345`)
-        .set("Authorization", "Bearer " + loginResponse.body.data.token)
+        .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
         .set("Content-Type", "application/json")
         .send({ 
             name: "test nol",
@@ -299,7 +299,7 @@ describe("DELETE /api/mechanics/mechanicId", () => {
         const mechanic = await getMechanic()
 
         const response = await request(web).delete(`/api/mechanics/${mechanic.id}`)
-        .set("Authorization", "Bearer " + loginResponse.body.data.token)
+        .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
 
         depth(response.body)
 
@@ -314,7 +314,7 @@ describe("DELETE /api/mechanics/mechanicId", () => {
         })
 
         const response = await request(web).delete(`/api/mechanics/12345`)
-        .set("Authorization", "Bearer " + loginResponse.body.data.token)
+        .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
 
         depth(response.body)
 
@@ -350,12 +350,12 @@ describe("GET /api/mechanics/:mechanicId/photo", () => {
         const mechanic = await getMechanic()
 
         const createPhotoMechanic = await request(web).post(`/api/mechanics/${mechanic.id}/photo`)
-        .set("Authorization", "Bearer " + loginResponse.body.data.token)
+        .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
         .set("Content-Type", "multipart/form-data")
         .attach("photo", __dirname + "/filetest/ayampenyet.jpeg")
 
         const getPhotoMechanic = await request(web).get(`/api/mechanics/${mechanic.id}/photo`)
-        .set("Authorization", "Bearer " + loginResponse.body.data.token)
+        .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
 
         depth(getPhotoMechanic.body)
 
@@ -370,7 +370,7 @@ describe("GET /api/mechanics/:mechanicId/photo", () => {
         })
 
         const response = await request(web).get(`/api/mechanics/12345/photo`)
-        .set("Authorization", "Bearer " + loginResponse.body.data.token)
+        .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
 
         depth(response.body)
 
@@ -387,7 +387,7 @@ describe("GET /api/mechanics/:mechanicId/photo", () => {
         const mechanic = await getMechanic()
 
         const getPhotoMechanic = await request(web).get(`/api/mechanics/${mechanic.id}/photo`)
-        .set("Authorization", "Bearer " + loginResponse.body.data.token)
+        .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
 
         depth(getPhotoMechanic.body)
 

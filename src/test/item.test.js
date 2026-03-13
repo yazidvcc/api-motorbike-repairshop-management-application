@@ -18,7 +18,7 @@ describe("POST /api/items", () => {
         })
 
         const response = await request(web).post("/api/items")
-            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
             .set("Content-Type", "application/json")
             .send({
                 name: "test",
@@ -44,7 +44,7 @@ describe("POST /api/items", () => {
         await createItem()
 
         const response = await request(web).post("/api/items")
-            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
             .set("Content-Type", "application/json")
             .send({
                 name: "test",
@@ -63,7 +63,7 @@ describe("POST /api/items", () => {
         })
 
         const response = await request(web).post("/api/items")
-            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
             .set("Content-Type", "application/json")
             .send({
                 name: "oli",
@@ -92,7 +92,7 @@ describe("PUT /api/items/itemId", () => {
         const item = await createItem()
 
         const response = await request(web).put(`/api/items/${item.id}`)
-            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
             .set("Content-Type", "application/json")
             .send({
                 name: "test update",
@@ -119,7 +119,7 @@ describe("PUT /api/items/itemId", () => {
         const item = await createItem()
 
         const response = await request(web).put(`/api/items/${item.id}`)
-            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
             .set("Content-Type", "application/json")
             .send({
                 name: "test update"
@@ -141,7 +141,7 @@ describe("PUT /api/items/itemId", () => {
         })
 
         const response = await request(web).put(`/api/items/123`)
-            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
             .set("Content-Type", "application/json")
             .send({
                 name: "test update"
@@ -160,7 +160,7 @@ describe("PUT /api/items/itemId", () => {
         })
 
         const response = await request(web).put(`/api/items/123`)
-            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
             .set("Content-Type", "application/json")
             .send({
                 name: "test update",
@@ -190,7 +190,7 @@ describe("GET /api/items/itemId", () => {
         const item = await createItem()
 
         const response = await request(web).get(`/api/items/${item.id}`)
-            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
 
         depth(response.body)
 
@@ -208,7 +208,7 @@ describe("GET /api/items/itemId", () => {
         })
 
         const response = await request(web).get(`/api/items/123`)
-            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
 
         depth(response.body)
 
@@ -232,7 +232,7 @@ describe("DELETE /api/items/itemId", () => {
         const item = await createItem()
 
         const response = await request(web).delete(`/api/items/${item.id}`)
-            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
 
         depth(response.body)
 
@@ -247,7 +247,7 @@ describe("DELETE /api/items/itemId", () => {
         })
 
         const response = await request(web).delete(`/api/items/123`)
-            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
 
         depth(response.body)
 
@@ -272,7 +272,7 @@ describe("GET /api/itemss", () => {
         })
 
         const response = await request(web).get("/api/items")
-            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
             .query({
                 name: "test",
                 page: 1,
@@ -293,7 +293,7 @@ describe("GET /api/itemss", () => {
         })
 
         const response = await request(web).get("/api/items")
-            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
             .query({
                 name: "apa",
                 page: 1,
@@ -316,7 +316,7 @@ describe("GET /api/itemss", () => {
         })
 
         const response = await request(web).get("/api/items")
-            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
             .query({
                 name: "test",
                 page: 2,
@@ -348,7 +348,7 @@ describe("POST /api/items/itemId/photo", () => {
         const item = await createItem()
 
         const response = await request(web).post(`/api/items/${item.id}/photo`)
-            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
             .set("Content-Type", "multipart/form-data")
             .attach("photo", __dirname + "/filetest/ayampenyet.jpeg")
 
@@ -366,7 +366,7 @@ describe("POST /api/items/itemId/photo", () => {
         })
 
         const response = await request(web).post(`/api/items/123/photo`)
-            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
             .set("Content-Type", "multipart/form-data")
             .attach("photo", __dirname + "/filetest/ayampenyet.jpeg")
 
@@ -385,7 +385,7 @@ describe("POST /api/items/itemId/photo", () => {
         const item = await createItem()
 
         const response = await request(web).post(`/api/items/${item.id}/photo`)
-            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
             .set("Content-Type", "multipart/form-data")
             .attach("photo", __dirname + "/filetest/text.txt")
 
@@ -413,12 +413,12 @@ describe("GET /api/items/itemId/photo", () => {
         const item = await createItem()
 
         const addPhotoResponse = await request(web).post(`/api/items/${item.id}/photo`)
-            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
             .set("Content-Type", "multipart/form-data")
             .attach("photo", __dirname + "/filetest/ayampenyet.jpeg")
 
         const response = await request(web).get(`/api/items/${item.id}/photo`)
-            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
 
         depth(response.body)
 
@@ -434,7 +434,7 @@ describe("GET /api/items/itemId/photo", () => {
         })
 
         const response = await request(web).get(`/api/items/123/photo`)
-            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
 
         depth(response.body)
 
@@ -451,7 +451,7 @@ describe("GET /api/items/itemId/photo", () => {
         const item = await createItem()
 
         const response = await request(web).get(`/api/items/${item.id}/photo`)
-            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
 
         depth(response.body)
 

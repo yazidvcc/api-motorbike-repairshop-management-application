@@ -2,7 +2,7 @@ import request from "supertest"
 import prismaClient from "../application/database"
 import { web } from "../application/web"
 import { depth } from "../application/depht"
-import { createItem, createManyOrder, getMechanic, mechanicRegister } from "./test-util"
+import { createItem, createManyOrder, getMechanic, createMechanic } from "./test-util"
 
 describe("POST /api/orders", () => {
 
@@ -28,7 +28,7 @@ describe("POST /api/orders", () => {
         }
 
         const response = await request(web).post("/api/orders")
-            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
             .set("Content-Type", "application/json")
             .send({
                 type: "transaction",
@@ -61,10 +61,10 @@ describe("POST /api/orders", () => {
             })
         }
 
-        const mechanic = await mechanicRegister()
+        const mechanic = await createMechanic()
 
         const response = await request(web).post("/api/orders")
-            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
             .set("Content-Type", "application/json")
             .send({
                 type: "services",
@@ -91,7 +91,7 @@ describe("POST /api/orders", () => {
         })
 
         const response = await request(web).post("/api/orders")
-            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
             .set("Content-Type", "application/json")
             .send({
                 type: "transaction",
@@ -126,7 +126,7 @@ describe("POST /api/orders", () => {
         }
 
         const response = await request(web).post("/api/orders")
-            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
             .set("Content-Type", "application/json")
             .send({
                 type: "transaction",
@@ -156,7 +156,7 @@ describe("POST /api/orders", () => {
         }
 
         const response = await request(web).post("/api/orders")
-            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
             .set("Content-Type", "application/json")
             .send({
                 type: "services",
@@ -190,7 +190,7 @@ describe("GET /api/orders", () => {
         })
 
         const response = await request(web).get("/api/orders")
-            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
             
 
         depth(response.body)
@@ -208,7 +208,7 @@ describe("GET /api/orders", () => {
         })
 
         const response = await request(web).get("/api/orders")
-            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
             .query({
                 service_description: "Service motor"
             })
@@ -229,7 +229,7 @@ describe("GET /api/orders", () => {
         })
 
         const response = await request(web).get("/api/orders")
-            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
             .query({
                 date_start: "2026-01-03 00:00:00",
                 date_end: "2026-10-03 00:00:00"
@@ -251,7 +251,7 @@ describe("GET /api/orders", () => {
         })
 
         const response = await request(web).get("/api/orders")
-            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
             .query({
                 type: "invalid"
             })
@@ -270,7 +270,7 @@ describe("GET /api/orders", () => {
         })
 
         const response = await request(web).get("/api/orders")
-            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
             .query({
                 size: 5
             })
@@ -307,7 +307,7 @@ describe("GET /api/orders/orderId", () => {
         const order = await prismaClient.order.findFirst()
 
         const response = await request(web).get(`/api/orders/${order.id}`)
-            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
 
         depth(response.body)
 
@@ -339,7 +339,7 @@ describe("DELETE /api/orders/orderId", () => {
         const order = await prismaClient.order.findFirst()
 
         const response = await request(web).delete(`/api/orders/${order.id}`)
-            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
 
         depth(response.body)
 
@@ -354,7 +354,7 @@ describe("DELETE /api/orders/orderId", () => {
         })
 
         const response = await request(web).delete(`/api/orders/0`)
-            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
 
         depth(response.body)
 
@@ -369,7 +369,7 @@ describe("DELETE /api/orders/orderId", () => {
         })
 
         const response = await request(web).delete(`/api/orders/invalid`)
-            .set("Authorization", "Bearer " + loginResponse.body.data.token)
+            .set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
 
         depth(response.body)
 

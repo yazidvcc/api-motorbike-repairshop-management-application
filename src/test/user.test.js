@@ -55,7 +55,7 @@ describe("POST /api/users/logout", () => {
 
         logger.info(loginResponse.body.data.token)
 
-        const response = await request(web).post("/api/users/logout").set("Authorization", "Bearer " + loginResponse.body.data.token)
+        const response = await request(web).post("/api/users/logout").set("Cookie", "token=" + loginResponse.get('Set-Cookie').toString().split(";")[0].split("=")[1])
 
         logger.info(response.body.errors)
 

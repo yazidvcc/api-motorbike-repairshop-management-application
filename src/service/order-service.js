@@ -1,4 +1,3 @@
-import { totalmem, type } from "os"
 import prismaClient from "../application/database.js"
 import ResponseError from "../error/response-error.js"
 import { createOrderValidation, idOrderValidation, searchOrderValidation } from "../validation/order-validation.js"
@@ -54,6 +53,12 @@ const create = async (request) => {
         }
 
         request.total_part = total_part
+
+        const date = new Date()
+        const wibDate = new Date(date.getTime() + (7 * 60 * 60 * 1000))
+
+        request.date = wibDate
+        request.time = wibDate
 
         request.orderDetail = {
             createMany: {

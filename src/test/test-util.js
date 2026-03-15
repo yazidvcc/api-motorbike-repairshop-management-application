@@ -90,14 +90,16 @@ const getItems = async (count = undefined) => {
     if (count) {
         return prismaClient.item.findMany({
             select: {
-                id: true
+                id: true,
+                price: true
             },
             take: count
         })
     }
     return prismaClient.item.findMany({
         select: {
-            id: true
+            id: true,
+            price: true
         }
     })
 }
@@ -118,7 +120,7 @@ const createManyOrder = async (total_transaction = 10) => {
                 item_id: item.id,
                 quantity: Math.floor(Math.random() * 10) + 1
             })
-            // total_part += item.price * itemOrder[itemOrder.length - 1].quantity
+            total_part += item.price * itemOrder[itemOrder.length - 1].quantity
         }
 
         await prismaClient.order.create({
@@ -135,6 +137,81 @@ const createManyOrder = async (total_transaction = 10) => {
     }
 }
 
+const dataForMerec = async () => {
+    let orders = []
+
+    const now = new Date()
+
+    const items = await createManyItem()
+    const mechanic = await createManyMechanic()
+
+    for(let i = 1; i <= 10; i++) {
+        const items = await getItems(Math.floor(Math.random() * 10) + 1)
+        let itemOrder = []
+        let total_part = 0
+        for (const item of items) {
+            itemOrder.push({
+                item_id: item.id,
+                quantity: Math.floor(Math.random() * 10) + 1
+            })
+            total_part += item.price * itemOrder[itemOrder.length - 1].quantity
+        }
+
+        orders.push({
+            type: "transaction",
+            total_part: total_part,
+            orderDetail: {
+                createMany: {
+                    data: itemOrder
+                }
+            }
+        })
+    }
+
+    const mechanics = await prismaClient.mechanic.findMany({
+        select: {
+            id: true
+        }
+    })
+
+    for (let mechanic of mechanics) {
+
+        for (let i = 1; i <= Math.floor(Math.random() * 10) + 1; i++) {
+            const items = await getItems(Math.floor(Math.random() * 10) + 1)
+            let itemOrder = []
+            let total_part = 0
+            for (const item of items) {
+                itemOrder.push({
+                    item_id: item.id,
+                    quantity: Math.floor(Math.random() * 10) + 1
+                })
+                total_part += item.price * itemOrder[itemOrder.length - 1].quantity
+            }
+
+            orders.push({
+                type: "services",
+                mechanic_id: mechanic.id,
+                total_part: total_part,
+                total_service: Math.floor(Math.random() * 100000) + 1,
+                service_description: "Service motor",
+                date: new Date(now.getFullYear(), now.getMonth(), Math.floor(Math.random() * 14) + 1),
+                orderDetail: {
+                    createMany: {
+                        data: itemOrder
+                    }
+                }
+            })
+        } 
+    }
+
+    for (const order of orders) {
+        await prismaClient.order.create({
+            data: order
+        })
+    }
+    return "OK"
+}
+
 export {
     userRegister,
     createMechanic,
@@ -142,5 +219,6 @@ export {
     getMechanic,
     createItem,
     createManyItem,
-    createManyOrder
+    createManyOrder,
+    dataForMerec
 }

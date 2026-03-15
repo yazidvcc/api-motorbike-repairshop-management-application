@@ -12,6 +12,7 @@ userRouter.use(authMiddleware)
 userRouter.post("/api/users/logout", userController.logout)
 
 userRouter.post("/api/mechanics", mechanicController.create)
+userRouter.get("/api/mechanics/ranking", mechanicController.ranking)
 userRouter.get("/api/mechanics", mechanicController.search)
 userRouter.get("/api/mechanics/:mechanicId", mechanicController.get)
 userRouter.put("/api/mechanics/:mechanicId", mechanicController.update)

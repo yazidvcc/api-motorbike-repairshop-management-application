@@ -84,6 +84,17 @@ const getPhoto = async (req, res, next) => {
     }
 }
 
+const ranking = async (req, res, next) => {
+    try {
+        const result = await mechanicService.mooraRanking()
+        res.status(200).json({
+            data: result
+        })
+    } catch (e) {
+        next(e)
+    }
+}
+
 export default {
     create,
     photo,
@@ -91,5 +102,6 @@ export default {
     update,
     remove,
     getPhoto,
-    get
+    get,
+    ranking
 }

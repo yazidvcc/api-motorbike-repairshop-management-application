@@ -20,22 +20,22 @@ model User {
 }
 
 model Mechanic {
-  id Int @id @default(autoincrement())
-  name String @db.VarChar(100)
-  phone String? @db.VarChar(20)
+  id      Int     @id @default(autoincrement())
+  name    String  @db.VarChar(100)
+  phone   String? @db.VarChar(20)
   address String? @db.VarChar(255)
-  photo String? @db.VarChar(255)
-  orders Order[]
+  photo   String? @db.VarChar(255)
+  orders  Order[]
 
   @@map("mechanics")
 }
 
 model Item {
-  id Int @id @default(autoincrement())
-  name String @db.VarChar(100)
-  price Int @db.Int
-  stock Int @db.Int
-  photo String? @db.VarChar(255)
+  id          Int           @id @default(autoincrement())
+  name        String        @db.VarChar(100)
+  price       Int           @db.Int
+  stock       Int           @db.Int
+  photo       String?       @db.VarChar(255)
   orderDetail OrderDetail[]
 
   @@map("items")
@@ -47,13 +47,14 @@ enum Type {
 }
 
 model Order {
-  id            Int      @id @default(autoincrement())
-  type          Type     @default(transaction)
-  total_part    Int?     @db.Int
-  total_service Int?     @db.Int
-  service_description String? @db.VarChar(255)
-  date          DateTime @default(now()) @db.Timestamp(0)
-  mechanic_id   Int?
+  id                  Int      @id @default(autoincrement())
+  type                Type     @default(transaction)
+  total_part          Int?     @db.Int
+  total_service       Int?     @db.Int
+  service_description String?  @db.VarChar(255)
+  date                DateTime @db.Date
+  time                DateTime @db.Time
+  mechanic_id         Int?
 
   mechanic    Mechanic?     @relation(fields: [mechanic_id], references: [id], onDelete: NoAction, onUpdate: Cascade)
   orderDetail OrderDetail[]

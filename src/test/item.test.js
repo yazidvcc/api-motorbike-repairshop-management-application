@@ -6,7 +6,6 @@ import { createItem, createManyItem } from "./test-util.js"
 
 describe("POST /api/items", () => {
 
-
     afterEach(async () => {
         await prismaClient.item.deleteMany()
     })

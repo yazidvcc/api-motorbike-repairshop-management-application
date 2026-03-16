@@ -398,31 +398,3 @@ describe("GET /api/mechanics/:mechanicId/photo", () => {
 
     
 })
-
-describe("GET /api/mechanics/ranking", () => {
-
-    jest.setTimeout(30000)
-
-    // beforeEach(async () => {
-    //     await dataForMerec()
-    // })
-
-    // afterEach(async () => {
-    //     await prismaClient.orderDetail.deleteMany()
-    //     await prismaClient.order.deleteMany()
-    //     await prismaClient.mechanic.deleteMany()
-    // })
-
-    it("test aja sih", async () => {
-        depth(await mechanicService.dataRanking())
-    })
-
-    // it("should success get mechanics ranking using MOORA with MEREC weights", async () => {
-       
-    //     const result = await mechanicService.mooraRanking();
-
-    //     console.log("MOORA Ranking Results:", JSON.stringify(result, null, 2));
-
-        
-    // })
-})

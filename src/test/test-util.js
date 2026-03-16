@@ -111,6 +111,9 @@ const createManyOrder = async (total_transaction = 10) => {
     const items = await createManyItem()
     const mechanic = await createManyMechanic()
 
+    const date = new Date()
+    const wibDate = new Date(date.getTime() + (7 * 60 * 60 * 1000))
+    
     for (let i = 1; i <= total_transaction; i++) {
         const items = await getItems(Math.floor(Math.random() * 10) + 1)
         let itemOrder = []
@@ -127,6 +130,8 @@ const createManyOrder = async (total_transaction = 10) => {
             data: {
                 type: "transaction",
                 total_part: total_part,
+                date: wibDate,
+                time: wibDate,
                 orderDetail: {
                     createMany: {
                         data: itemOrder

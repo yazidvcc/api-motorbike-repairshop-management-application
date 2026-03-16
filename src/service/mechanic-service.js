@@ -127,8 +127,40 @@ const search = async (request) => {
         },
     })
 
+    const date = new Date()
+    const startOfDayWib = new Date(date.getFullYear(), date.getMonth(), date.getDate())
+    const startOfToday = new Date(startOfDayWib.getTime() - (7 * 60 * 60 * 1000))
+
+    const endOfDayWib = new Date(startOfDayWib)
+    endOfDayWib.setHours(23, 59, 59, 999)
+    const endOfToday = new Date(endOfDayWib.getTime() - (7 * 60 * 60 * 1000))
+
+    const mechanicIds = mechanics.map(m => m.id)
+
+    const dailyServiceSum = await prismaClient.order.groupBy({
+        by: ['mechanic_id'],
+        where: {
+            type: "services",
+            mechanic_id: { in: mechanicIds },
+            date: {
+                gte: startOfToday.toISOString(),
+                lte: endOfToday.toISOString()
+            }
+        },
+        _sum: {
+            total_service: true
+        }
+    })
+
+    const salaryMap = new Map(dailyServiceSum.map(item => [item.mechanic_id, item._sum.total_service || 0]))
+
+    const mechanicsWithSalary = mechanics.map(mechanic => ({
+        ...mechanic,
+        daily_salary: salaryMap.get(mechanic.id) || 0
+    }))
+
     return {
-        data: mechanics,
+        data: mechanicsWithSalary,
         paging: {
             page: request.page,
             total_item: count,
@@ -270,10 +302,8 @@ const dataRanking = async () => {
                     }
                 }
             ]
-        }
+        },
     })
-
-    depth(absen)
 
     const countAbsen = []
     let count = 1

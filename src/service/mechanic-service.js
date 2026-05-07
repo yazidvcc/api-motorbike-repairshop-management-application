@@ -271,6 +271,11 @@ const dataRanking = async () => {
                     }
                 },
                 {
+                    mechanic_id: {
+                        not: null
+                    }
+                },
+                {
                     date: {
                         gte: new Date(now.getFullYear(), now.getMonth(), 1).toISOString(),
                         lte: now.toISOString()
@@ -293,6 +298,11 @@ const dataRanking = async () => {
                 {
                     type: {
                         equals: "services"
+                    }
+                },
+                {
+                    mechanic_id: {
+                        not: null
                     }
                 },
                 {

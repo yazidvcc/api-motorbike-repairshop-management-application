@@ -1,6 +1,6 @@
 import prismaClient from "../application/database.js"
 import ResponseError from "../error/response-error.js"
-import { createOrderValidation, idOrderValidation, searchOrderValidation } from "../validation/order-validation.js"
+import { createOrderValidation, searchOrderValidation, idOrderValidation } from "../validation/order-validation.js"
 import validate from "../validation/validation.js"
 
 const create = async (request) => {
@@ -145,6 +145,7 @@ const search = async (request) => {
                         item: {
                             select: {
                                 id: true,
+                                price: true,
                                 name: true
                             }
                         },

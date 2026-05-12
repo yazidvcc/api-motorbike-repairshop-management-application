@@ -25,6 +25,7 @@ userRouter.put("/api/items/:itemId", itemController.update)
 userRouter.delete("/api/items/:itemId", itemController.remove)
 userRouter.post("/api/items/:itemId/photo", itemController.photo)
 userRouter.post("/api/orders", orderController.create)
+userRouter.get("/api/orders/summary", orderController.summary)
 userRouter.get("/api/orders", orderController.search)
 userRouter.delete("/api/orders/:orderId", orderController.remove)
 

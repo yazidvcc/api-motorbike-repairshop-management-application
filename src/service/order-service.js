@@ -131,6 +131,7 @@ const search = async (request) => {
                 id: true,
                 type: true,
                 date: true,
+                time: true,
                 total_part: true,
                 total_service: true,
                 service_description: true,
@@ -241,9 +242,89 @@ const remove = async (orderId) => {
     }
 }
 
+const summary = async (request) => {
+    request = validate(searchOrderValidation, request)
+    
+    const filters = []
+
+    if (request.type) {
+        filters.push({
+            type: {
+                equals: request.type
+            }
+        })
+    }
+
+    let startDate = request.date_start;
+    let endDate = request.date_end;
+
+    if (startDate.getFullYear() === 1970 && endDate.getFullYear() === 2099) {
+        const now = new Date();
+        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+        endDate = now;
+    }
+
+    filters.push({
+        date: {
+            gte: startDate,
+            lte: endDate
+        }
+    })
+
+    if (request.service_description) {
+        filters.push({
+            service_description: {
+                contains: request.service_description
+            }
+        })
+    }
+
+    if (request.name_mechanic) {
+        filters.push({
+            mechanic: {
+                name: {
+                    contains: request.name_mechanic
+                }
+            }
+        })
+    }
+
+    const whereClause = filters.length > 0 ? { AND: filters } : {}
+
+    const aggregate = await prismaClient.order.aggregate({
+        where: whereClause,
+        _sum: {
+            total_part: true,
+            total_service: true
+        },
+        _count: {
+            id: true
+        }
+    })
+
+    const partsSold = await prismaClient.orderDetail.aggregate({
+        where: {
+            order: whereClause
+        },
+        _sum: {
+            quantity: true
+        }
+    })
+
+    return {
+        total_part_income: aggregate._sum.total_part || 0,
+        total_service_income: aggregate._sum.total_service || 0,
+        total_orders: aggregate._count.id || 0,
+        total_parts_sold: partsSold._sum.quantity || 0,
+        total_income: (aggregate._sum.total_part || 0) + (aggregate._sum.total_service || 0)
+    }
+}
+
+
 export default {
     create,
     search,
     get,
-    remove
+    remove,
+    summary
 }
